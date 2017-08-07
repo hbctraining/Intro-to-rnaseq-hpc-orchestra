@@ -1,10 +1,8 @@
 ---
 title: "The Shell"
 author: "Sheldon  McKay, Mary Piper, Radhika Khetani"
-date: "Thursday, March 3, 2017"
+date: "August 7, 2017"
 ---
-
-Approximate time: 120 minutes
 
 ## Learning Objectives
 - How do you access the shell?
@@ -14,20 +12,6 @@ Approximate time: 120 minutes
   - manipulating files
   - automating tasks
 - What is it good for?
-- Where are resources where I can learn more? (because the shell is awesome)
-
-
-## Why use the Unix shell?
-
-![Automation](../img/gvng.jpg)
-
-   Unix is user-friendly. It's just very selective about who its friends are.
-
-
-Today we're going to go through how to access Unix/Linux and some of the basic
-shell commands.
-
-> As a reminder, the shell is the "interpreter" that helps us interact with the computer using human-readable commands.
 
 ## Setting up
 
@@ -47,7 +31,7 @@ By default, there is no terminal for the bash shell available in the Windows OS,
 
 > You can also use [Putty](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html) to log in to remote machines from Windows computers, but it is a little more involved and has different capabilities.
 
-**Let's log in**
+#### Let's log in! 
 
 Type in the following command with your username to login:
 
@@ -57,7 +41,7 @@ ssh username@orchestra.med.harvard.edu
 
 You will receive a prompt for your password, and you should type in your associated password; note that the cursor will *not move* as you type in your password.
 
-> A warning might pop up the first time you try to connect to a remote machine, type "Yes" or "Y". 
+A warning might pop up the first time you try to connect to a remote machine, type "Yes" or "Y". 
 
 #### Copying example data folder
 
@@ -105,11 +89,12 @@ $ ls
 
 You will see:
 
-	genomics_data  other  raw_fastq  README.txt  reference_data
-
+```
+genomics_data  other  raw_fastq  README.txt  reference_data
+```
 > ls stands for 'list' and it lists the contents of a directory.
 
-There are five items listed.  What are they? We can use a "modifier" with `ls` to get more information; this modifier is called an argument (more below).
+There are five items listed. What types of files are they? We can use a "modifier" with `ls` to get more information; this modifier is called an argument (more below).
 
 ```bash
 $ ls -F
@@ -128,13 +113,13 @@ $ ls -l
 ```
 
 to see whether items in a directory are files or directories. `ls -l` gives a lot more information too.
-```bash
-	total 124
-	drwxrwsr-x 2 mp298 mp298  78 Sep 30 10:47 genomics_data
-	drwxrwsr-x 6 mp298 mp298 107 Sep 30 10:47 other
-	drwxrwsr-x 2 mp298 mp298 228 Sep 30 10:47 raw_fastq
-	-rw-rw-r-- 1 mp298 mp298 377 Sep 30 10:47 README.txt
-	drwxrwsr-x 2 mp298 mp298 238 Sep 30 10:47 reference_data
+```
+total 124
+drwxrwsr-x 2 mp298 mp298  78 Sep 30 10:47 genomics_data
+drwxrwsr-x 6 mp298 mp298 107 Sep 30 10:47 other
+drwxrwsr-x 2 mp298 mp298 228 Sep 30 10:47 raw_fastq
+-rw-rw-r-- 1 mp298 mp298 377 Sep 30 10:47 README.txt
+drwxrwsr-x 2 mp298 mp298 238 Sep 30 10:47 reference_data
 ```
 
 Let's go into the raw_fastq directory and see what is in there.
@@ -148,7 +133,7 @@ Irrel_kd_1.subset.fq  Irrel_kd_3.subset.fq  Mov10_oe_2.subset.fq
 Irrel_kd_2.subset.fq  Mov10_oe_1.subset.fq  Mov10_oe_3.subset.fq
 ```
 
-All six items in this directory have no trailing slashes, so they are all files.
+All six items in this directory have no trailing slashes, so they are all files, not folders or programs.
 
 
 #### Arguments
@@ -179,8 +164,7 @@ Let's practice moving around a bit.
 
 We're going to work in that `unix_workshop` directory.
 
-First we did something like go to the folder of our username. Then we opened
-`unix_workshop` then `raw_fastq`
+First we did something like go to the folder of our username. Then we opened `unix_workshop` then `raw_fastq`
 
 Like on any computer you have used before the file structure within unix is hierarchical, like an upside down tree with root (/) as the starting point of the tree-like structure:
 
@@ -268,9 +252,13 @@ List the `Mov10_oe_1.subset.fq` file from your home directory without changing d
 
 The `cd` command takes an argument which is the directory name. Directories can be specified using either a *relative path* or a *full path*. As we know, the directories on the computer are arranged into a hierarchy. The full path tells you where a directory is in that hierarchy. Navigate to the home directory (`cd`). Now, enter the `pwd` command and you should see:
 
-`$ pwd`
+```bash
+$ pwd
+```
 
-`/home/username`
+```
+/home/username
+```
 
 which is the full path for your home directory. This tells you that you are in a directory called `username`, which sits inside a directory called `home` which sits inside the very top directory in the hierarchy, the *root directory*. So, to summarize: `username` is a directory in `home` which is a directory in `/`.
 
@@ -289,13 +277,13 @@ $ cd unix_workshop/raw_fastq/
 
 had the same effect - it took us to the `raw_fastq` directory. But, instead of specifying the full path (`/home/username/unix_workshop/raw_fastq`), we specified a *relative path*. In other words, we specified the path **relative to our current working directory**. 
 
-A full path always starts with a `/`. A relative path does not.
+**A full path always starts with a `/`, a relative path does not.**
 
 A relative path is like getting directions from someone on the street. They tell you to "go right at the Stop sign, and then turn left on Main Street". That works great if you're standing there together, but not so well if you're trying to tell someone how to get there from another country. A full path is like GPS coordinates. It tells you exactly where something is no matter where you are right now.
 
 You can usually use either a full path or a relative path depending on what is most convenient. If we are in the home directory, it is more convenient to just enter the relative path since it involves less typing.
 
-Over time, it will become easier for you to keep a mental note of the structure of the directories that you are using and how to quickly navigate amongst them.
+Over time, it will become easier for you to keep a mental note of the structure of the directories that you are using and how to quickly navigate among them.
 
 ***
 **Exercise**
@@ -304,50 +292,27 @@ Over time, it will become easier for you to keep a mental note of the structure 
 * List the contents of the `/bin` directory. Do you see anything familiar in there? How can you tell these are programs rather than plain files?
 ***
 
-## Saving time with shortcuts, wild cards, and tab completion
+### Saving time with tab completion, wildcards and other shortcuts 
 
-#### Shortcuts
+#### Tab completion
 
-There are some shortcuts which you should know about. Dealing with the
-home directory is very common. So, in the shell the tilde character,
-"~", is a shortcut for your home directory. Navigate to the `raw_fastq`
-directory:
+Navigate to the home directory. Typing out directory names can waste a lot of time. When you start typing out the name of a directory, then hit the tab key, the shell will try to fill in the rest of the directory name. For example, type `cd` to get back to your home directly, then enter:
 
 ```bash
-$ cd
+$ cd uni<tab>
 ```
+
+The shell will fill in the rest of the directory name for `unix_workshop`. Now go to `unix_workshop/raw_fastq` and 
 
 ```bash
-$ cd unix_workshop/raw_fastq
+$ ls Mov10_oe_<tab><tab>
 ```
 
-Then enter the command:
+When you hit the first tab, nothing happens. The reason is that there are multiple directories in the home directory which start with `Mov10_oe_`. Thus, the shell does not know which one to fill in. When you hit tab again, the shell will list the possible choices.
 
-```bash
-$ ls ~
-```
+Tab completion can also fill in the names of commands. For example, enter `e<tab><tab>`. You will see the name of every command that starts with an `e`. One of those is `echo`. If you enter `ec<tab>` you will see that tab completion works. 
 
-This prints the contents of your home directory, without you having to type the full path because the tilde "~" is equivalent to "/home/username".
-
-Another shortcut is the "..":
-
-```bash
-$ ls ..
-```
-
-The shortcut `..` always refers to the directory above your current directory. So, it prints the contents of the `unix_workshop`. You can chain these together, so:
-
-```bash
-$ ls ../..
-```
-
-prints the contents of `/home/username` which is your home directory. 
-
-Finally, the special directory `.` always refers to your current directory. So, `ls`, `ls .`, and `ls ././././.` all do the same thing, they print the contents of the current directory. This may seem like a useless shortcut right now, but we used it earlier when we copied over the data to our home directory.
-
-
-To summarize, while you are in your home directory, the commands `ls ~`, `ls ~/.`, and `ls /home/username` all do exactly the same thing. These shortcuts are not necessary, but they are really convenient!
-
+> **Tab completion is your friend!** It helps prevent spelling mistakes, and speeds up the process of typing in the full command.
 
 #### Wild cards
 
@@ -391,27 +356,47 @@ navigating to a different directory.
 BONUS: List all of the files in `/bin` that contain the letter 'a' or 'c'.
 
 ****
+#### Shortcuts
 
-#### Tab Completion
-
-Navigate to the home directory. Typing out directory names can waste a lot of time. When you start typing out the name of a directory, then hit the tab key, the shell will try to fill in the rest of the directory name. For example, type `cd` to get back to your home directly, then enter:
-
-```bash
-$ cd uni<tab>
-```
-
-The shell will fill in the rest of the directory name for `unix_workshop`. Now go to `unix_workshop/raw_fastq` and 
+There are some shortcuts which you should know about. Dealing with the
+home directory is very common. So, in the shell the tilde character,
+"~", is a shortcut for your home directory. Navigate to the `raw_fastq`
+directory:
 
 ```bash
-$ ls Mov10_oe_<tab><tab>
+$ cd
 ```
 
-When you hit the first tab, nothing happens. The reason is that there are multiple directories in the home directory which start with `Mov10_oe_`. Thus, the shell does not know which one to fill in. When you hit tab again, the shell will list the possible choices.
+```bash
+$ cd unix_workshop/raw_fastq
+```
 
-Tab completion can also fill in the names of commands. For example, enter `e<tab><tab>`. You will see the name of every command that starts with an `e`. One of those is `echo`. If you enter `ec<tab>` you will see that tab completion works. 
+Then enter the command:
 
-> **Tab completion is your friend!** It helps prevent spelling mistakes, and speeds up the process of typing in the full command.
+```bash
+$ ls ~
+```
 
+This prints the contents of your home directory, without you having to type the full path because the tilde "~" is equivalent to "/home/username".
+
+Another shortcut is the "..":
+
+```bash
+$ ls ..
+```
+
+The shortcut `..` always refers to the directory above your current directory. So, it prints the contents of the `unix_workshop`. You can chain these together, so:
+
+```bash
+$ ls ../..
+```
+
+prints the contents of `/home/username` which is your home directory. 
+
+Finally, the special directory `.` always refers to your current directory. So, `ls`, `ls .`, and `ls ././././.` all do the same thing, they print the contents of the current directory. This may seem like a useless shortcut right now, but we used it earlier when we copied over the data to our home directory.
+
+
+To summarize, while you are in your home directory, the commands `ls ~`, `ls ~/.`, and `ls /home/username` all do exactly the same thing. These shortcuts are not necessary, but they are really convenient!
 
 #### Command History
 
@@ -433,11 +418,9 @@ to see a numbered list of recent commands, including this just issues
 
 **Other handy command-related shortcuts**
 
-* 'Ctrl-c' will cancel the command you are writing, and give you a fresh prompt.
-
-* 'Ctrl-a' will bring you to the start of the command you are writing.
-
-* 'Ctrl-e' will bring you to the end of the command you are writing.
+- <kbd>Ctrl + C</kbd> will cancel the command you are writing, and give you a fresh prompt.
+- <kbd>Ctrl + A</kbd> will bring you to the start of the command you are writing.
+- <kbd>Ctrl + E</kbd> will bring you to the end of the command.
 
 ## Examining Files
 
@@ -469,23 +452,21 @@ We will explore fastq files in more detail later, but notice that fastq files ha
 
 The `less` command opens the file, and lets you navigate through it. The keys used to move around the file are identical to the `man` command.
 
-**Some commands in `less`**
+<span class="caption">Shortcuts for `less`</span>
 
-| key     | action |
-| ------- | ---------- |
-| "space" | to go forward |
-|  "b"    | to go backwards |
-|  "g"    | to go to the beginning |
-|  "G"    | to go to the end |
-|  "q"    | to quit |
+| key              | action                 |
+| ---------------- | ---------------------- |
+| <kbd>SPACE</kbd> | to go forward          |
+| <kbd>b</kbd>     | to go backwards        |
+| <kbd>g</kbd>     | to go to the beginning |
+| <kbd>G</kbd>     | to go to the end       |
+| <kbd>q</kbd>     | to quit                |
 
-`less` also gives you a way of searching through files. Just hit the "/" key to begin a search. Enter the name of the word you would like to search for and hit enter. It will jump to the next location where that word is found. If you hit "/" then "enter", `less` will just repeat the previous search. `less` searches from the current location and works its way forward. If you are at the end of the file and search for the word "cat", `less` will not find it. You need to go to the beginning of the file and search.
+`less` also gives you a way of searching through files. Just hit the <kbd>/</kbd> key to begin a search. Enter the name of the string of characters you would like to search for and hit enter. It will jump to the next location where that string is found. If you hit <kbd>/</kbd> then <kbd>ENTER</kbd>, `less` will just repeat the previous search. `less` searches from the current location and works its way forward. If you are at the end of the file and search for the word "cat", `less` will not find it. You need to go to the beginning of the file and search.
 
-For instance, let's search for the sequence `GAGACCCCACGGGAGGCCA` in our file. You can see that we go right to that sequence and can see what it looks like. (Remember to hit 'q' to exit the `less` command)
+For instance, let's search for the sequence `GAGACCC` in our file. You can see that we go right to that sequence and can see what it looks like. To exit hit <kbd>q</kbd>.
 
-Remember, the `man` command (program) actually uses `less` internally and
-therefore uses the same keys and methods, so you can search manuals
-using "/" as well!
+The `man` command (program) actually uses `less` internally and therefore uses the same keys and methods, so you can search manuals using `/` as well!
 
 There's another way that we can look at files, and in this case, just
 look at part of them. This can be particularly useful if we just want
@@ -514,8 +495,7 @@ $ tail -n 1 Mov10_oe_1.subset.fq
 
 Now we can move around in the file structure, look at files, search files, redirect. But what if we want to do normal things like copy files or move them around or get rid of them. Sure we could do most of these things without the command line, but what fun would that be?! Besides it's often faster to do it at the command line, or you'll be on a remote server like Amazon where you won't have another option.
 
-Our raw data in this case is fastq files. We don't want to change the original files,
-so let's make a copy to work with.
+Our raw data in this case is fastq files. We don't want to change the original files, so let's make a copy to work with.
 
 Lets copy the file using the copy `cp` command. Navigate to the `raw_fastq` directory and enter:
 
@@ -578,28 +558,20 @@ just nicely put the files in the Trash. They're really gone.
 >
 > Same with moving and renaming files. It will **not** ask you if you are sure that you want to "replace existing file". You can use `rm -f` if you want it to ask before deleting the file(s).
 
-***
-**Exercise**
-
-Do the following:
-
-1.  Create a backup of your fastq files
-2.  Create a backup directory called `new_backup`
-3.  Copy your backup files there
-
-***
-
-By default, `rm`, will NOT delete directories. You can tell `rm` to delete a directory using the `-r` option. Let's delete both backup directories, `backup` and `new_backup`. Enter the following command:
+We really don't need these backup directories, so, let's delete both. Make sure you have navigated to `~/ngs_course/unix_lesson/`, and now we will use the `rm` command to delete. By default, `rm`, will NOT delete directories, but you use the `-r` flag if you are sure that you want to delete the directories and everything within them. To be safe, let's use it with the `-i` flag.
 
 ```bash
-$ rm -r new_backup/ backup/
+$ rm -ri backup_ref_data/ backup_fastq/ 
 ```
+
+- `-r`: recursive, commonly used as an option when working with directories, e.g. with `cp`. 
+- `-i`: prompt before every removal.``
 
 ## Writing files
 
 We've been able to do a lot of work with files that already exist, but what if we want to write our own files. Obviously, we're not going to type in a FASTA file, but you'll see as we go through other tutorials, there are a lot of reasons we'll want to write a file, or edit an existing file.
 
-To write in files, we're going to use the command `nano`. We're going to create
+To write files, we're going to use the command `nano`. We're going to create
 a file that contains some text. We'll name this file 'awesome.txt'.
 
 ```bash
@@ -622,33 +594,26 @@ Now you've written a file. You can take a look at it with less or cat, or open i
 
 * Open 'awesome.txt' and on a new line add the following `echo "This is my first file written in nano"`, and save the file.
 
-**Exercise-extra**
-
-* Let's try to find a *hidden directory* in `unix_workshop`, and list its contents.  What is the name of the file within the hidden directory?
-
-> Hint: hidden files and folders in unix start with `.`, for example `.bashrc`
-
 ****
 
 
-**Commands, options, and keystrokes covered in this lesson**
+## Commands, options, and keystrokes covered
 
-```bash
+```
+bash
 cd
 ls
 man
 pwd
-~ (home dir)
-. (current dir)
-.. (parent dir)
-*  (wildcard)
+~           # home dir
+.           # current dir
+..          # parent dir
+*           # wildcard
 echo
-ctrl-C (cancel current command)
-ctrl-R (reverse history search)
-ctrl-A (start of line)
-ctrl-E (end of line)
+ctrl + c    # cancel current command
+ctrl + a    # start of line
+ctrl + e    # end of line
 history
-! (repeat cmd)
 cat
 less
 head
@@ -689,4 +654,3 @@ the command line, automate something you don't really need to automate.
 * *The materials used in this lesson were derived from work that is Copyright © Data Carpentry (http://datacarpentry.org/). 
 All Data Carpentry instructional material is made available under the [Creative Commons Attribution license](https://creativecommons.org/licenses/by/4.0/) (CC BY 4.0).*
 * *Adapted from the lesson by Tracy Teal. Original contributors: Paul Wilson, Milad Fatenejad, Sasha Wood and Radhika Khetani for Software Carpentry (http://software-carpentry.org/)*
-
