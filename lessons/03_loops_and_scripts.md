@@ -25,7 +25,7 @@ Shell scripts are **text files that contain commands we want to run**. As with a
 We are finally ready to see what makes the shell such a powerful programming environment. We are going to take the commands we repeat frequently and save them into a file so that we can **re-run all those operations** again later by typing **one single command**. Let's write a shell script that will do two things:
 
 1. Tell us our current working directory
-2. Lists the contents of the directory 
+2. List the contents of the directory 
 
 First open a new file using `nano`:
 
@@ -42,7 +42,7 @@ echo "These are the contents of this directory:"
 ls -l 
 ```
 
-Close nano and save the file. Now let's run the new script we have created. To run a shell script you usually use the `bash` or `sh` command.
+Exit `nano` and save the file. Now let's run the new script we have created. To run a shell script you usually use the `bash` or `sh` command.
 
 ```bash
 $ sh listing.sh
@@ -60,33 +60,33 @@ A **variable** is a common concept shared by many programming languages. Variabl
 
 Extending the bucket analogy: the bucket has a name associated with it, i.e. the name of the variable, and when referring to the information in the bucket, we use the name of the bucket, and do not directly refer to the actual data stored in it (which is by design, since the stored data is variable).
 
-In the example below, we define a variable or a 'bucket' called `file`. We will put the filename `Mov10_oe_1.subset.fq` as the value inside the bucket.
+In the example below, we define a variable or a 'bucket' called `filename`. We will put the filename `Mov10_oe_1.subset.fq` as the value inside the bucket.
 
 ```bash
-$ file=Mov10_oe_1.subset.fq
+$ filename=Mov10_oe_1.subset.fq
 ```
-Once you press return, you should be back at the command prompt. *How do we know that we actually created the bash variable?* We can use the echo command to list what's inside `file`:
+Once you press return, you should be back at the command prompt. *How do we know that we actually created the bash variable?* We can use the echo command to list what's inside `filename`:
 
 ```bash
-$ echo $file
+$ echo $filename
 ```
 
-What do you see in the terminal? If the variable was not created, the command will return nothing. Did you notice that when we created the variable we just typed in the variable name, but when using it as an argument to the `echo` command, we explicitly use a `$` in front of it (`$file`)? Why? 
+What do you see in the terminal? If the variable was not created, the command will return nothing. Did you notice that when we created the variable we just typed in the variable name, but when using it as an argument to the `echo` command, we explicitly use a `$` in front of it (`$filename`)? Why? 
 
 Well, in the former, we're setting the value, while in the latter, we're retrieving the value. This is standard shell notation (syntax) for defining and using variables. **Don't forget the `$` when you want to retrieve the value of a variable!** 
 
-Let's try another command using the variable that we have created. In the last lesson, we introduced the `wc -l` command which allows us to count the number of lines in a file. We can count the number of lines in `Mov10_oe_1.subset.fq` by referencing the `file` variable, but first move into the `raw_fastq` directory:
+Let's try another command using the variable that we have created. In the last lesson, we introduced the `wc -l` command which allows us to count the number of lines in a file. We can count the number of lines in `Mov10_oe_1.subset.fq` by referencing the `filename` variable, but first move into the `raw_fastq` directory:
 
 ```bash
 $ cd ~/unix_workshop/raw_fastq
-$ wc -l $file
+$ wc -l $filename
 ```
 
 ***
 
 **Exercise**
 
-* Reuse the `$file` variable to store a different file name, and rerun the commands we ran above (`wc -l`, `echo`)
+* Reuse the `$filename` variable to store a different file name, and rerun the commands we ran above (`wc -l`, `echo`)
 
 ***
 
@@ -139,7 +139,9 @@ The structure or the syntax of (*for*) loops in bash is as follows:
 ```bash
 for (variable_name) in (list)
 do
-(commands $variable_name) 
+(command1 $variable_name)
+.
+.
 done
 ```
 
@@ -155,13 +157,13 @@ for var in *.fq
  done
 ```
 
-####What does this loop do? 
+#### What does this loop do? 
 
 Most simply, it writes to the terminal (`echo`) the name of the file and the number of lines (`wc -l`) for each files that end in `.fq` in the current directory. The output is almost identical to what we had before.
 
 In this case the list of files is specified using the asterisk wildcard: `*.fq`, i.e. all files that end in `.fq`. Then, we execute 2 commands between the `do` and `done`. With a loop, we execute these commands for each file at a time. Once the commands are executed for one file, the loop then executes the same commands on the next file in the list. 
 
-Essentially, **the number of loops == the number of items in the list**, in our case that is 2 times since we have 2 files in `~/unix_workshop/raw_fastq` that end in `.fq`. This is done by changing the value of the `var` variable 2 times. 
+Essentially, **the number of items in the list (variable name) == number of times the code will loop through**, in our case that is 2 times since we have 2 files in `~/unix_workshop/raw_fastq` that end in `.fq`, and these filenames are stored in the `var` variable.
 
 Of course, `var` is a useless variable name. But since it doesn't matter what variable name we use, we can make it something more intuitive.
 
@@ -172,7 +174,7 @@ for filename in *.fq
    wc -l $filename
  done
 ```
-In the long run, it's best to use a name that will help point out a variable's function, so your future self will understand what you are thinking now.
+In the long run, it's best to use a name that will help point out a variable's functionality, so your future self will understand what you are thinking now.
 
 Pretty simple and cool, huh?
 
@@ -316,12 +318,13 @@ To run this script, we simply enter the following command:
 $ sh generate_bad_reads_summary.sh
 ```
 
-To keep our data organized, let's move all of the bad read files out of the `raw_fastq` directory into a new directory called `other`.
+To keep our data organized, let's move all of the bad read files out of the `raw_fastq` directory into a new directory called `other`, and the script to a new directory called `scripts`.
 
 ```bash
-$ mkdir other
+$ mkdir other scripts
 
 $ mv raw_fastq/*bad* other/
+$ mv generate_bad_reads_summary.sh scripts/
 ```
 
 ---
