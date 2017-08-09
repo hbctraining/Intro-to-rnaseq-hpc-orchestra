@@ -14,19 +14,16 @@ Approximate time: 60 minutes
 
 ## Searching files
 
-We showed a little how to search within a file using `less`. We can also
-search within files without even opening them, using `grep`. Grep is a command-line
-utility for searching plain-text data sets for lines matching a string or regular expression.
-Let's give it a try!
+We used `less` to search a file, however we can also search within files without opening them using a new command, `grep`. `grep` is a command-line utility for searching plain-text data sets for lines matching a string or regular expression. `grep` stands for "**g**lobally search a **r**egular **e**xpression and **p**rint" Let's give it a try!
 
-We are going to practice searching with `grep` using our fastq files, which contain the sequencing reads (nucleotide sequences) output from a sequencing facility. Each sequencing read in a FASTQ file is associated with four lines of output, with the first line (header line) always starting with an `@` symbol. A whole fastq record for a single read should appear similar to the following:
+We are going to practice searching with `grep` using our fastq files, which contain the sequencing reads (nucleotide sequences) output from a sequencing facility. Each sequenced read in a FASTQ file is associated with four lines of output, with the first line (header line) always starting with an `@` symbol. A whole fastq record for a single read should appear similar to the following:
 
 	@HWI-ST330:304:H045HADXX:1:1101:1111:61397
 	CACTTGTAAGGGCAGGCCCCCTTCACCCTCCCGCTCCTGGGGGANNNNNNNNNNANNNCGAGGCCCTGGGGTAGAGGGNNNNNNNNNNNNNNGATCTTGG
 	+
 	@?@DDDDDDHHH?GH:?FCBGGB@C?DBEGIIIIAEF;FCGGI#########################################################
 	
-Suppose we want to see how many reads in our file `Mov10_oe_1.subset.fq` are really bad, with 10 consecutive Ns. We can search for the string NNNNNNNNNN in the file using the `grep` command. 
+The Ns in the sequence line denote bases that the sequencer was unable to identify, so in effect poor quality bases. The 4th line represents the encoding for the quality of each base in the 2nd line. We will be covering both these in more detail later, for now let's suppose we want to see how many reads in our file `Mov10_oe_1.subset.fq` are really bad, i.e. with 10 consecutive Ns. We can search for the string NNNNNNNNNN in the file using the `grep` command. 
 
 ```bash
 $ cd ~/unix_workshop/raw_fastq
@@ -59,39 +56,28 @@ for example:
 ****
 **Exercise**
 
-1) Search for the sequence CTCAATGAAGAAATCTCTTAAAC in `Mov10_oe_1.subset.fq`.
+* Search for the sequence CTCAATGAAGAAATCTCTTAAAC in `Mov10_oe_1.subset.fq`.
 In addition to finding the sequence, have your search also return
-the name of the sequence.
-
-2) Search for that sequence in all Mov10 replicate fastq files.
+the name of the sequence (the first line in a FASTQ entry).
 ****
 
 ## Redirection
 
-We're excited we have all these sequences that we care about that we
-just got from the FASTQ files. That is a really important motif
-that is going to help us answer our important question. But all those
-sequences just went whizzing by with grep. How can we capture them?
+We're excited we have all these sequences that we care about that we just got from the FASTQ files. That is a really important motif that is going to help us answer our important question. But all those sequences just went whizzing by with grep. How can we capture them?
 
-We can do that with something called "redirection". The idea is that
-we're redirecting the output from the terminal (all the stuff that went
-whizzing by) to something else. In this case, we want to print it
-to a file, so that we can look at it later.
+We can do that with something called "redirection". The idea is that we're redirecting the output from the terminal (all the stuff that went whizzing by) to something else. In this case, we want to print it to a file, so that we can look at it later.
 
-The redirection command for putting something in a file is `>`
+The redirection command for putting something in a file is `>`.
 
-Let's try it out and put all the sequences that contain 'NNNNNNNNNN'
-from all the files in to another file called `bad_reads.txt`.
+Let's try it out and put all the sequences that contain 'NNNNNNNNNN' from all the files in to another file called `bad_reads.txt`.
 
 ```bash
 $ grep -B1 -A2 NNNNNNNNNN Mov10_oe_1.subset.fq > bad_reads.txt
 ```
 
-The prompt should sit there a little bit, and then it should look like nothing
-happened. But type `ls`. You should have a new file called `bad_reads.txt`. Take
-a look at it and see if it has what you think it should.
+The prompt will disappear for a little bit, and when it comes back, it will look like nothing happened. But, if you type `ls` you should have a new file called `bad_reads.txt`. Take a look at it and see if it has what you think it should.
 
-If we use '>>', it will append to rather than overwrite a file.  This can be useful for saving more than one search, for example:
+If we use '>>', it will append to, rather than overwrite, a file.  This can be useful for saving more than one search, for example:
     
 ```bash
 $ grep -B1 -A2 NNNNNNNNNN Mov10_oe_2.subset.fq >> bad_reads.txt
@@ -103,13 +89,7 @@ Since our `bad_reads.txt` file isn't a raw_fastq file, we should move it to a di
 $ mv bad_reads.txt ../other/
 ```
 
-There's one more useful redirection command that we're going to show, and that's
-called the pipe command, and it is `|`. It's probably not a key on
-your keyboard you use very much. What `|` does is take the output that went
-scrolling by on the terminal and runs it through another command.
-When it was all whizzing by before, we wished we could just slow it down and
-look at it, like we can with `less`. Well it turns out that we can! We pipe
-the `grep` command to `less`
+There's one more useful redirection command that we're going to show, and that's called the pipe command, and it is `|`. It's probably not a key on your keyboard you use very much. What `|` does is take the output that went scrolling by on the terminal and runs it through another command. When it was all whizzing by before, we wished we could just slow it down and look at it, like we can with `less`. Well it turns out that we can! We pipe the `grep` command to `less` or to `head` to just see the first few lines.
 
 ```bash
 $ grep -B1 -A2 NNNNNNNNNN Mov10_oe_1.subset.fq | less
@@ -117,33 +97,19 @@ $ grep -B1 -A2 NNNNNNNNNN Mov10_oe_1.subset.fq | less
 
 Now we can use the arrows to scroll up and down and use `q` to get out.
 
-We can also do something tricky and use the command `wc`. `wc` stands for
-*word count*. It counts the number of lines or characters. So, we can use
-it to count the number of lines we're getting back from our `grep` command.
-And that will magically tell us how many sequences we're finding.
-
-```bash
-$ grep NNNNNNNNNN Mov10_oe_1.subset.fq | wc
-```
-
-This command tells us the number of lines, words and characters in the file. If we
-just want the number of lines, we can use the `-l` flag for `lines`.
+We can also do count the number of lines using the `wc` command. `wc` stands for *word count*. It counts the number of lines or characters. So, we can use it to count the number of lines we're getting back from our `grep` command using the `-l` argument. And that will magically tell us how many bad sequences we have in the file.
 
 ```bash
 $ grep NNNNNNNNNN Mov10_oe_1.subset.fq | wc -l
 ```
 
-Redirecting is not super intuitive, but it's really powerful for stringing
-together these different commands, so you can do whatever you need to do.
+This command when used without any arguments would tell us the number of lines, words and characters in the file; the `-l` flag specifies that we only want the number of lines. Try it out without the `-l` to see the full output.
 
-The philosophy behind these commands is that none of them
-really do anything all that impressive. BUT when you start chaining
-them together, you can do some really powerful things really
-efficiently. If you want to be proficient at using the shell, you must
-learn to become proficient with the pipe and redirection operators:
-`|`, `>`, `>>`.
+Redirecting is not super intuitive, but it's really powerful for stringing together these different commands, so you can do whatever you need to do.
 
-## Practice with searching and redirection
+The philosophy behind these commands is that none of them really do anything all that impressive. BUT when you start chaining them together, you can do some really powerful things really efficiently. **To be able to use the shell effectively, becoming proficient with the pipe and redirection operators:  `|`, `>`, `>>` is essential.**
+
+## Practice with searching and redirection (piping)
 
 Finally, let's use the new tools in our kit and a few new ones to examine our gene annotation file, **chr1-hg19_genes.gtf**, which we will be using later to find the genomic coordinates of all known exons on chromosome 1.
 
@@ -174,9 +140,9 @@ $ grep PLEKHN1 chr1-hg19_genes.gtf | head -n 5
 
 This search returns two different transcripts of the same gene, NM_001160184 and NM_032129, that contain the same exon.
 
-Now that we know what type of information is inside of our gtf file, let's explore our commands to answer a simple question about our data: **how many total exons are present on chromosome 1 using `chr1-hg19_genes.gtf`?**
+Now that we know what type of information is inside of our gtf file, let's explore our commands to answer a simple question about our data: **how many unique exons are present on chromosome 1 using `chr1-hg19_genes.gtf`?**
 
-To determine the number of total exons on chromosome 1, we are going to perform a series of steps:
+To determine the number of unique exons on chromosome 1, we are going to perform a series of steps:
 	
 	1. Extract only the genomic coordinates of exon features
 	2. Subset the dataset to only include the feature type and genomic location information
@@ -185,20 +151,20 @@ To determine the number of total exons on chromosome 1, we are going to perform 
 	
 #### Extracting exon features
 
-We only want the exons (not CDS or start_codon features), so let's use `grep` to only keep the exon lines and save to file, **`chr1_exons`**:
+We only want the exons (not CDS or start_codon features), so let's use `grep` to only keep the exon lines and pipe it to head to see what we get:
 
 ```bash
-$ grep exon chr1-hg19_genes.gtf > chr1_exons
+$ grep exon chr1-hg19_genes.gtf | head
 ```
 
 #### Subsetting dataset to only keep genomic coordinates
 
-We will define an exon by it's genomic coordinates. Therefore, we only need the genomic location (chr, start, stop, and strand) information to find the total number of exons. The columns corresponding to this information are 1, 4, 5, and 7. 
+We will define the uniqueness of an exon by its genomic coordinates. Therefore, we only need the genomic location (chr, start, stop, and strand) information to find the total number of unique exons. The columns corresponding to this information are 1, 4, 5, and 7. 
 
-'cut' is a program that will extract columns from files.  It is a very good command to know.  Let's first try out the 'cut' command on a small dataset (just the first 5 lines of chr1_exons) to make sure we have the command correct:
+'cut' is a program that will extract columns from files.  It is a very good command to know.  Let's first try out the 'cut' command on a just the exonic lines to make sure we have the command correct by using multiple piped commands and looking at the first 10 lines:
 
 ```bash
-$ cut -f1,4,5,7 chr1_exons | head -n 5
+$ grep exon chr1-hg19_genes.gtf | cut -f1,4,5,7  | head
 ```
    
 '-f1,4,5,7' means to cut these fields (columns) from the dataset.  
@@ -211,38 +177,33 @@ $ cut -f1,4,5,7 chr1_exons | head -n 5
 
 The `cut` command assumes our data columns are separated by tabs (i.e. tab-delimited). The `chr1-hg19_genes.gtf` is a tab-delimited file, so the default `cut` command works for us. However, data can be separated by other types of delimiters. Another common delimiter is the comma, which separates data in comma-separated value (csv) files. If your data is not tab delimited, there is a `cut` command argument (`-d`) to specify the delimiter.
 
-Our output looks good, so let's cut these columns from the whole dataset (not just the first 5 lines) and save it as a file, **`chr1_exons_cut`**:
-
-```bash
-$ cut -f1,3,4,5,7 chr1_exons > chr1_exons_cut
-```
-
-Check the cut file to make sure that it looks good using `less`. 
+Our output looks good, so let's keep going...
 
 #### Removing duplicate exons
 
-Now, we need to remove those exons that show up multiple times for different transcripts.    
-
-We can use a new tool, `sort`, to remove exons that show up more than once. We can use the `sort` command with the `-u` option to return only unique lines.
+Now, we need to remove those exons that show up multiple times for different transcripts. For this, we can use a new tool, `sort`, to remove exons that show up more than once. We can use the `sort` command with the `-u` option to return only unique lines.
 
 ```bash
-$ sort -u chr1_exons_cut | head -n 5
+$ grep exon chr1-hg19_genes.gtf | cut -f1,4,5,7 | sort -u | head 
 ```
+
+Do you see a change in how the sorting has changed? By default the `sort` command will sort and what you can't see here is that it has removed the duplicates. How do we check this?
 
 #### Counting the total number of exons
 
-Now, to count how many unique exons are on chromosome 1, we need to pipe the output to `wc -l`:
+First, let's check how many lines we would have without using `sort -u` by piping the output to `wc -l`.
 
 ```bash
-$ sort -u chr1_exons_cut | wc -l
+grep exon chr1-hg19_genes.gtf | cut -f1,4,5,7 | wc -l
 ```
 
-****
-**Final Exercise**
+Now, to count how many unique exons are on chromosome 1, we will add back the `sort -u` and pipe the output to `wc -l`
 
-How could have you have determined the number of total exons by combining all of the previous commands (starting with the original chr1-hg19_genes.gtf), into a single command (no intermediate files) using pipes?
+```bash
+$ grep exon chr1-hg19_genes.gtf | cut -f1,4,5,7 | sort -u | wc -l
+```
 
-****
+What we did in one command up here, we could have done it in multiple steps by saving the output of each command to a file, but that would not be as efficient if all we needed was a number to work with. The intermediate files are not useful and they occupy precious space on the computer and add clutter to the file system. 
 
 **Commands, options, and keystrokes covered in this lesson**
 
@@ -254,7 +215,6 @@ grep
 wc
 cut
 sort
-uniq
 ```
 
 ---
