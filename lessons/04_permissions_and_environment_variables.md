@@ -16,18 +16,7 @@ Approximate time: 40 minutes
 
 Unix controls who can read, modify, and run files using *permissions*.
 
-Let's start with how users are identified in a shared, multi-user system.
-We all have a unique username, e.g. rsk27 and a userid 124292.
-
-Find out yours:
-
-```bash
-$ id <username>
-```
-
-Users of a multi-user UNIX system can belong to any number of groups, each of which has a unique group name, and a numeric group ID.
-
-The list of who is in what group is usually stored in the system file `/etc/group`.
+Users of a multi-user UNIX system can belong to any number of groups.
 
 Let's see what groups we all belong to:
 
@@ -41,49 +30,17 @@ Depending on our affiliation, we all belong to at least a couple of groups. I be
 * hbctraining
 * Domain_Users
 
-As you can imagine, on a shared system it is important to protect each user's data. To start, every file and directory on a Unix computer belongs to one owner and one group. Along with each file's content, the operating system stores the numeric IDs of the user and group that own it, which is the "metadata" for a given file.
+As you can imagine, on a shared system it is important to protect each user's data. To start, every file and directory on a Unix computer belongs to one owner and one group. Along with each file's content, the operating system stores the information about the user and group that own it, which is the "metadata" for a given file.
 
 The user-and-group model means that for each file every user on the system falls into one of three categories:
 
-* the owner of the file,
-* someone in the file's group,
+* the owner of the file
+* a member of the group the file belongs to
 * and everyone else.
 
 For each of these three categories, the computer keeps track of whether people in that category can read the file, write to the file, or execute the file (i.e., run it if it is a program).
 
-For example, if a file had the following set of permissions:
-
-<table class="table table-striped">
-<tr><td></td><th>user</th><th>group</th><th>all</th></tr>
-<tr><th>read</th><td>yes</td><td>yes</td><td>no</td></tr>
-<tr><th>write</th><td>yes</td><td>no</td><td>no</td></tr>
-<tr><th>execute</th><td>no</td><td>no</td><td>no</td></tr>
-</table>
-
-it would mean that:
-
-*   the file's owner can read and write it, but not run it;
-*   other people in the file's group can read it, but not modify it or run it; and
-*   everybody else can do nothing with it at all.
-
-Let's look at this model in action.
-
-If we say,
-
-```bash
-$ ls -l /bin/ls
-```
-
-It tells us `-rwxr-xr-x. 1 root root 109208 Oct 15  2014 /bin/ls`. 
- 
-So, `ls` is an executable file that belong to user root and group root, and only they can modify (write) it.
-
-> ### Necessary But Not Sufficient
->
-> The fact that something is marked as executable doesn't actually mean it contains or is a program of some kind. We could easily mark the `~/unix_workshop/raw_fastq/Irrel_kd_1.subset.fq` file as executable using the commands that are introduced below. Depending on the operating system we're using, trying to "run" it will fail (because it doesn't contain instructions the computer recognizes).
-
-
-Now let's run the command `ls -l ~/unix_workshop`, to list the files in that directory:
+Let's look at this model in action by running the command `ls -l ~/unix_workshop`, to list the files in that directory:
 
 ```bash
 $ ls -l
@@ -102,11 +59,11 @@ Next to the modification time is the file's size in bytes and the names of the u
 
 Let's have a closer look at one of those permission strings for README.txt:
 
-```bash
+```
 -rw-rw-r--
 ```
 
-The first character tells us what type of thing this is: '-' means it's a regular file, while 'd' means it's a directory, and other characters mean more esoteric things.
+The first character tells us what type of thing this is: '-' means it's a regular file and not a directory, while 'd' means it's a directory, and other characters mean more esoteric things.
 
 The next three characters tell us what permissions the file's owner has. Here, the owner can read and write the file: `rw-`.
 
@@ -114,7 +71,7 @@ The middle triplet shows us the group's permissions. If the permission is turned
 
 The final triplet shows us what everyone who isn't the file's owner, or in the file's group, can do. In this case, it's `r--` again, so everyone on the system can look at the file's contents.
 
-To change permissions, we use the `chmod` command (whose name stands for "change mode"). Let's make our README.txt file **inaccessible** to all users other than you and your group, currently they are able to read it:
+To change permissions, we use the `chmod` command (whose name stands for "change mode"). Let's make our README.txt file **inaccessible** to all users other than you and the group the file belong to (you, in this case), currently they are able to read it:
 
 ```bash
 $ ls -l ~/unix_workshop/README.txt
@@ -140,7 +97,7 @@ $ ls -l ~/unix_workshop/README.txt
 -rw-rw-r-- 1 rsk27 rsk27 377 Oct  6 10:28 /home/rsk27/unix_workshop/README.txt
 ```
 
-If we wanted to make this an executable file for ourselves (the file's owners) we would say `chmod u+rwx`, where the 'u' signals that we are changing permission for the file's owner. To change permissions for a whole group, you'd use the letter "g" `chmod g-w`. 
+If we wanted to make this an executable file for ourselves (the file's owners) we would say `chmod u+rwx`, where the 'u' signals that we are changing permission for the file's owner. To change permissions for the "group", you'd use the letter "g", e.g. `chmod g-w`. 
 
 Before we go any further,
 let's run `ls -l` on the `~/unix_workshop` directory to get a long-form listing:
@@ -154,22 +111,11 @@ drwxrwsr-x 2 rsk27 rsk27 228 Oct  6 10:28 raw_fastq
 drwxrwsr-x 2 rsk27 rsk27 238 Oct  6 10:28 reference_data
 ```
 
-Look at the permissions for directories (`drwxrwsr-x`): the 'x' indicates that "execute" is turned on. What does that mean? A directory isn't a program or an executable file, we can't "run" it.
+Look at the permissions for directories (`drwxrwsr-x`): the 'x' indicates that "execute" is turned on. What does that mean? A directory isn't a program or an executable file, we can't "execute" it. (To see an example of a file that is actually executable, try `ls -l /bin/ls`.)
 
-Well, 'x' means something different for directories. It gives someone the right to *traverse* the directory, but not to look at its contents. The distinction is subtle, so let's have a look at an example.
+Well, 'x' means something different for directories. It gives someone the right to *traverse* the directory, but not to look at its contents. This is beyond the scope of today's class, but note that you can give access to a specific file that's deep inside a directory structure without giving them access to all the files and sub-directories within.
 
-Dr. Vlad Smith's home directory has three subdirectories called `venus`, `mars`, and `pluto`:
-
-![execute](../img/permission-directory.png "Execute Permission for Directories")
-
-Each of these has a subdirectory in turn called `notes`, and those sub-subdirectories contain various files.
-If a user's permissions on `venus` are 'r-x', then if she tries to see the contents of `venus` and `venus/notes` using `ls`, the computer lets her see both.
-If her permissions on `mars` are just 'r--', then she is allowed to read the contents of both `mars` and `mars/notes`.
-But if her permissions on `pluto` are only '--x', she cannot see what's in the `pluto` directory: `ls pluto` will tell her she doesn't have permission to view its contents.
-If she tries to look in `pluto/notes`, though, the computer will let her do that.
-She's allowed to go through `pluto`, but not to look at what's there. She will be able to do this, only if she knows that there is a file called `notes` in the directory, since she cannot list what is in there.
-
-This trick gives people a way to make some of their directories visible to the world as a whole without opening up everything else.
+>> The fact that something is marked as executable doesn't actually mean it contains or is a program of some kind. We could easily mark the `~/unix_workshop/raw_fastq/Irrel_kd_1.subset.fq` file as executable using `chmod`. Depending on the operating system we're using, trying to "run" it will fail (because it doesn't contain instructions the computer recognizes, i.e. it is not a script of some type).
 
 ****
 **Exercise**
@@ -190,12 +136,12 @@ Which of the following statements is true?
 
 ## **Environment Variables**
 
-Environment variables are, in short, variables that describe the environment in which programs run in. Two commonly encountered variables are HOME and PATH.
+Environment variables are, in short, variables that describe the environment in which programs run, and they are predefined for a given computer or cluster that you are on. You can reset them to customize the environment. Two commonly encountered environment variables are HOME and PATH.
 
 * HOME defines the home directory for a user.
 * PATH defines a list of directories to search through when looking for a command to execute.
 
-In the context of the shell the Environment variables are usually all upper case.
+In the context of the shell the environment variables are usually all in upper case.
 
 First, let's see our list of environmental variables:
 ```bash
@@ -207,16 +153,17 @@ Let's see what is stored in these variables:
 ```bash
 $ echo $HOME
 
-/home/rsk27
+/home/trainingaccount_03
 ```
 
-Variables, in most systems, are called/denoted with a "$" before the variable name
+Variables, in most systems, are called or denoted with a "$" before the variable name, just like a regular variable.
 
 ```bash
 $ echo $PATH
 
 /opt/lsf/7.0/linux2.6-glibc2.3-x86_64/bin:/groups/bcbio/bcbio/anaconda/bin:/opt/bcbio/local/bin:/opt/lsf/7.0/linux2.6-glibc2.3-x86_64/etc:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin
 ```
+
 I have a lot of full/absolute paths in my $PATH variable, which are separated from each other by a ":"; here is the list in a more readable format:
 
 * /opt/lsf/7.0/linux2.6-glibc2.3-x86_64/bin
@@ -230,11 +177,11 @@ I have a lot of full/absolute paths in my $PATH variable, which are separated fr
 * /usr/sbin
 * /sbin
 
-These are the directories that the shell will look in (in the same order as they are listed) for an executable file that you type on the command prompt. 
+These are the directories that the shell will look through (in the same order as they are listed) for an executable file that you type on the command prompt.
 
-When someone says a command or an executable file is "in you path", they mean that the parent directory for that command/file is contained in the list in the PATH variable. 
+When someone says a command or an executable file is "in you path", they mean that the parent directory for that command/file is contained in the list within the $PATH variable. 
 
-For any command you execute on the command prompt, you can find out where they are located using the which command.
+For any command you execute on the command prompt, you can find out where they are located using the `which` command.
 
 Try it on a few of the basic commands we have learned so far:
 ```bash
@@ -243,23 +190,26 @@ $ which <your favorite command>
 $ which <your favorite command>
 ```
 
+Are the directories listed by the `which` command within $PATH?
+
 > #### Modifying Environment Variables
 >
 > If you are interested in adding a new entry to the path variable, the command to use is `export`. This command is usually executed as follows: 
-`export PATH=$PATH:~/opt/bin`, which tells the shell to add the ~/opt/bin directory to the end of the preexisting list within $PATH. Alternatively, if you use `export PATH=~/opt/bin:$PATH`, the same directory will be added to the beginning of the list. The order determines where the shell will look first.
+>
+> `export PATH=$PATH:~/opt/bin`, which tells the shell to add the ~/opt/bin directory to the end of the preexisting list within $PATH. Alternatively, if you use `export PATH=~/opt/bin:$PATH`, the same directory will be added to the beginning of the list. The order determines which directory the shell will look in first to find a program.
 
 #### Closer look at the inner workings of the shell, in the context of $PATH
  
-The $PATH variable is reset to a set of defaults (/bin:/usr/bin and so on), each time you start a new shell terminal. To make sure that a command/program you need is always at your fingertips, you have to put it in one of 2 special shell scripts that are always run when you start a new terminal. These are hidden files in your home directory called `.bashrc` and `.bash_profile`. You can create them if they don't exist, and shell will use them.
+The $PATH variable is reset to a set of defaults (/bin:/usr/bin and so on), each time you start a new shell Terminal. To make sure that a command/program you need is always at your fingertips, you have to put it in one of 2 special shell scripts that are always run when you start a new terminal. These are hidden files in your home directory called `.bashrc` and `.bash_profile`. You can create them if they don't exist, and shell will use them.
 
-Check what hidden files exist in our home directory:
+Check what hidden files exist in our home directory using the `-a` flag:
 ```bash
 $ ls -al ~/
 ```
 
-Open the .bashrc file and at the end of the file add the export command that adds a specific location to the list in $PATH. This way when you start a new shell, that location will always be in your path. 
+Open the `.bashrc` file and at the end of the file add the export command that adds a specific location to the list in $PATH. This way when you start a new shell, that location will always be in your path. 
 
-The location we want to add to the beginning of the list is `/opt/bcbio/local/bin`, we need this for when we run the RNA-Seq workflow tomorrow.
+The location we want to add to the beginning of the list is `/opt/bcbio/local/bin`, we need this for when we run the RNA-Seq workflow later.
 
 ```bash
 $ nano ~/.bashrc
