@@ -112,7 +112,7 @@ Now, let's create a home for our results
 $ mkdir ~/unix_workshop/rnaseq/results/fastqc
 ```
 
-...and move them there (recall, we are still in `~/ngs_course/rnaseq/raw_data/`)
+...and move them there (recall, we are still in `~/unix_workshop/rnaseq/raw_data/`)
 
 ```bash
 $ mv *fastqc* ~/unix_workshop/rnaseq/results/fastqc/
