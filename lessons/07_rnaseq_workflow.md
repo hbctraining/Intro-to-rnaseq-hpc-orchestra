@@ -18,7 +18,7 @@ Approximate time: 90 minutes
 
 To get started with this lesson, we will login to the cluster but this time we are going to ask for 6 cores. We will do this by adding `-n 6` to our bsub command:
 
-```
+```bash
 ssh username@orchestra.med.harvard.edu
 (enter password)
 
@@ -28,30 +28,21 @@ $ bsub -Is -n 6 -q interactive bash
 Change directories into the `unix_workshop` directory and copy the `reference_data` folder into your project directory:
 
 ```bash
-$ cd ~/unix_workshop/rnaseq_project
+$ cd ~/unix_workshop/rnaseq
 ```
 
 You should have a directory tree setup similar to that shown below. it is best practice to have all files you intend on using for your workflow present within the same directory. In our case, we have our original FASTQ files and post-trimming data generated in the previous section. We also have all reference data files that will be used in downstream analyses.
 
 ```
-rnaseq_project
-	├── data
-	│   ├── reference_data
-	│   │   └── chr1.fa
-	│   │   └── chr1-hg19_genes.gtf
- 	|   ├── untrimmed_fastq
-	│   │   
-	│   └── trimmed_fastq
-	│       ├── Irrel_kd_1.qualtrim25.minlen35.fq
-	│       ├── Irrel_kd_2.qualtrim25.minlen35.fq
-	│       ├── Irrel_kd_3.qualtrim25.minlen35.fq
-	│       ├── Mov10_oe_1.qualtrim25.minlen35.fq
-	│       ├── Mov10_oe_2.qualtrim25.minlen35.fq
-	│       └── Mov10_oe_3.qualtrim25.minlen35.fq
-	|
-	├── meta
-	├── results
-	└── logs
+rnaseq/
+	├── raw_data/
+	├── reference_data/
+	   └── chr1.fa
+	   └── chr1-hg19_genes.gtf
+	├── meta/
+	├── results/
+	├── scripts/
+	└── logs/
 ```
 
 We previously described a general overview of the steps involved in RNA-Seq analysis, and in this session we will take our clean reads and align them to the reference genome.
@@ -152,10 +143,9 @@ The basic options to **generate genome indices** using STAR are as follows:
 * `--sjdbGTFfile`: /path/to/GTF_file (gene annotation)
 * `--sjdbOverhang`: readlength -1
 
-```
+```bash
 ** DO NOT RUN**
 STAR --runThreadN 6 --runMode genomeGenerate --genomeDir ./ --genomeFastaFiles chr1.fa --sjdbGTFfile chr1-hg19_genes.gtf --sjdbOverhang 99
-
 ```
 
 The basic options for **mapping reads** to the genome using STAR are as follows:
@@ -188,7 +178,6 @@ $ STAR --runThreadN 6 \
 --outSAMattributes NH HI NM MD AS
 ```
 
-
 #### Exercise
 How many files do you see in your output directory? Using the `less` command take a look at `Mov10_oe_1_Log.final.out` and answer the following questions:  
 
@@ -205,7 +194,6 @@ These fields are described briefly below, but for more detailed information the 
 ![SAM](../img/sam_bam.png)
 
 ![SAM](../img/sam_bam3.png)
-
 
 Let's take a quick look at our alignment. To do so we first convert our BAM file into SAM format using samtools and then pipe it to the `less` command. This allows us to look at the contents without having to write it to file (since we don't need a SAM file for downstream analyses).
 
@@ -230,17 +218,15 @@ Use _**FileZilla**_ to copy the following files to your local machine:
 
 `results/STAR/Mov10_oe_1_Aligned.sortedByCoord.out.bam.bai` 
 
-
 > **NOTE: You can also transfer files to your laptop using the command line**
 >
 > Similar to the `cp` command, there is a command that allows you to securely copy files between computers. The command is called `scp` and allows files to be copied to, from, or between different hosts. It uses ssh for data transfer and provides the same authentication and same level of security as `ssh`. 
 >
 > First, identify the location of the _origin file_ you intend to copy, followed by the _destination_ of that file. Since the original file is located on Orchestra, this requires you to provide remote host and login information.
->
->```bash
+
+```bash
 $ scp user_name@transfer.orchestra.med.harvard.edu:/home/user_name/unix_workshop/rnaseq_project/results/Mov10_oe_1_Aligned.sortedByCoord.out.bam* /path/to/directory_on_laptop
 ```
->
 
 **Visualize**
 
@@ -256,8 +242,6 @@ Now that we have done this for one sample, let's try using the same commands to 
 1. How does the MOV10 gene look in the control sample in comparison to the overexpression sample?
 2. Take a look at a few other genes by typing into the search bar. For example, PPM1J and PTPN22. How do these genes compare? 
 
-
-
 ### Counting reads
 Once we have our reads aligned to the genome, the next step is to count how many reads have been mapped to each gene. Counting is done with a tool called [`htseq-count`](http://www-huber.embl.de/users/anders/HTSeq/doc/count.html). The input files required for counting include the BAM file and an associated gene annotation file in GTF format. `htseq-count` works by **taking the alignment coordinates for each read and cross-referencing that to the coordinates for features described in the GTF**. Most commonly a feature is considered to be a gene, which is the union of all exons (which is a feature type) that map to that gene. There is no minimum overlap to determine whether or not a read is counted for a particular gene, rather it is the mode that the user chooses. 
 
@@ -270,10 +254,9 @@ There are three modes available and are listed below in order of stringency, wit
 
 We will be using the 'union' mode as it is default and most commonly used. To find out more on the different modes and how they affect your output, take a look at the [manual](http://www-huber.embl.de/users/anders/HTSeq/doc/count.html)
 
-
 Let's start by creating a directory for the output:
 
-```
+```bash
 $ mkdir results/counts
 ```
 
@@ -281,10 +264,11 @@ In it's most basic form the `htseq` command requires only the BAM file and the G
 
 You will notice at the end of the command we have added a redirection symbol. Since htseq-count outputs results to screen, we need to re-direct it to file.
 
-```
+```bash
 $ htseq-count --stranded reverse --format bam results/STAR/Mov10_oe_1_Aligned.sortedByCoord.out.bam data/reference_data/chr1-hg19_genes.gtf  >  results/counts/Mov10_oe_1.counts
 ```
 
+***
 #### Exercise
 Take a look at the end of the file using the `tail` command. You should see a summary of how the reads were classified. 
 
@@ -297,15 +281,3 @@ Take a look at the end of the file using the `tail` command. You should see a su
 
 * *The materials used in this lesson were derived from work that is Copyright © Data Carpentry (http://datacarpentry.org/). 
 All Data Carpentry instructional material is made available under the [Creative Commons Attribution license](https://creativecommons.org/licenses/by/4.0/) (CC BY 4.0).*
-
-
-
-
-
-
-
-
-
-
-
-
