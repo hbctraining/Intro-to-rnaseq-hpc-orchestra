@@ -41,10 +41,10 @@ $ pwd
 
 This should return `/home/username`.
 
-Now make a directory for the RNA-seq analysis within the `ngs_course/` folder using the `mkdir` command. You can use the parents flag (`-p` or `--parents`) to complete the file path if any parents (e.g. `ngs_course/`) don't already exist. This isn't the case here, since we already made `ngs_course/`, but can be very useful when scripting workflows. 
+Now make a directory for the RNA-seq analysis within the `ngs_course/` folder using the `mkdir` command. You can use the parents flag (`-p` or `--parents`) to complete the file path if any parents (e.g. `ngs_course/`) don't already exist. This isn't the case here, since we already have the `unix_workshop/`, but it can be very useful when scripting workflows. 
 
 ```bash
-$ mkdir -p ~/ngs_course/rnaseq/
+$ mkdir -p ~/unix_workshop/rnaseq
 ```
 
 Next, set up the following structure within your project directory to keep files organized.
@@ -71,7 +71,7 @@ rnaseq
 Create a directory for the project by changing into `rnaseq/` and then using `mkdir` to create the subdirectories.
 
 ```bash
-$ cd ~/ngs_course/rnaseq/
+$ cd ~/unix_workshop/rnaseq
 $ mkdir -p logs meta raw_data reference_data results scripts
 ``` 
 
@@ -83,36 +83,36 @@ ls -l
 
 Let's populate the `rnaseq/` project with our example RNA-seq FASTQ data.
 
-The FASTQ files are located inside `~/ngs_course/unix_lesson/raw_fastq/`, and we need to copy them to `raw_data/`. We can match them by file extension with `*.fq`.
+The FASTQ files are located inside `~/unix_workshop/raw_fastq/`, and we need to copy them to `raw_data/`. We can match them by file extension with `*.fq`.
 
 ```bash
-$ cp ~/ngs_course/unix_lesson/raw_fastq/*.fq raw_data/
+$ cp ~/unix_workshop/raw_fastq/*.fq raw_data/
 ```
 
-Later in the workflow when we perform alignment, we will require genome reference files (.fa, .gtf) for alignment and read counting. These files are also in the `unix_lesson/` directory inside `reference_data/`, we can copy over the whole folder in this case. You can use `.` as a placeholder for the current working directory as the destination.
+Later in the workflow when we perform alignment, we will require genome reference files (.fa, .gtf) for alignment and read counting. These files are also in the `unix_workshop/` directory inside `reference_data/`, we can copy over the whole folder in this case. You can use `.` as a placeholder for the current working directory as the destination.
 
 ```bash
-$ cp -r ~/ngs_course/unix_lesson/reference_data/ .
+$ cp -r ~/unix_workshop/reference_data/ .
 ```
 
 Perfect, now the structure of `rnaseq/` should look like this:
 
 ```bash
 rnaseq
-├── logs
-├── meta
-├── raw_data
-│   ├── Irrel_kd_1.subset.fq
-│   ├── Irrel_kd_2.subset.fq
-│   ├── Irrel_kd_3.subset.fq
-│   ├── Mov10_oe_1.subset.fq
-│   ├── Mov10_oe_2.subset.fq
-│   └── Mov10_oe_3.subset.fq
-├── reference_data
-│   ├── chr1.fa
-│   └── chr1-hg19_genes.gtf
-├── results
-└── scripts
+  ├── logs
+  ├── meta
+  ├── raw_data
+  │   ├── Irrel_kd_1.subset.fq
+  │   ├── Irrel_kd_2.subset.fq
+  │   ├── Irrel_kd_3.subset.fq
+  │   ├── Mov10_oe_1.subset.fq
+  │   ├── Mov10_oe_2.subset.fq
+  │   └── Mov10_oe_3.subset.fq
+  ├── reference_data
+  │   ├── chr1.fa
+  │   └── chr1-hg19_genes.gtf
+  ├── results
+  └── scripts
 ```
 
 ### Documentation
@@ -134,8 +134,8 @@ Keeping notes on what happened in what order, and what was done, is essential fo
 
 ```
 ## README ##
-## This directory contains data generated from the NGS Data Analysis Course
-## Date: June 1st, 2017
+## This directory contains data generated during the Intro to RNA-seq course
+## Date: August 23rd, 2017
 
 There are six subdirectories in this directory:
 
@@ -148,9 +148,9 @@ scripts:
 ```
 
 *** 
-### Exercise
+### Homework exercise
 
-- Take a moment to create a README for the `rnaseq/` folder (hint: use `vim` to create the file). Give a short description of the project and brief descriptions of the types of files you will be storing within each of the sub-directories. 
+- Take a moment to create a README for the `rnaseq/` folder (hint: use `nano` to create the file). Give a short description of the project and brief descriptions of the types of files you will be storing within each of the sub-directories. 
 ***
 
 ## Understanding the dataset
