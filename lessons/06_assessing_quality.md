@@ -94,7 +94,7 @@ $ bsub -Is -n 6 -q interactive bash   #start a new session with 6 cpus (-n 6)
 
 $ module load seq/fastqc/0.11.3  #reload the module for the new session
 
-$ cd ~/ngs_course/rnaseq/raw_data
+$ cd ~/unix_workshop/rnaseq/raw_data
 
 $ fastqc -t 6 *.fq  #note the extra parameter we specified for 6 threads
 ```
@@ -115,7 +115,7 @@ $ mkdir ~/unix_workshop/rnaseq/results/fastqc
 ...and move them there (recall, we are still in `~/ngs_course/rnaseq/raw_data/`)
 
 ```bash
-$ mv *fastqc* ~/ngs_course/rnaseq/results/fastqc/
+$ mv *fastqc* ~/unix_workshop/rnaseq/results/fastqc/
 ```
 
 ### Performing quality assessment using job submission scripts
@@ -133,7 +133,7 @@ Submission of the script using the `bsub` command allows the load sharing facili
 Change directories to `~/unix_workshop/rnaseq/scripts`, and create a script named `mov10_fastqc.lsf` in `vim`. *Don't forget to enter insert mode, `i`, to start typing*.
 
 ```bash
-$ cd ~/ngs_course/rnaseq/scripts
+$ cd ~/unix_workshop/rnaseq/scripts
 
 $ vim mov10_fastqc.lsf
 ```
