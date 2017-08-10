@@ -41,7 +41,7 @@ $ pwd
 
 This should return `/home/username`.
 
-Now make a directory for the RNA-seq analysis within the `ngs_course/` folder using the `mkdir` command. You can use the parents flag (`-p` or `--parents`) to complete the file path if any parents (e.g. `ngs_course/`) don't already exist. This isn't the case here, since we already have the `unix_workshop/`, but it can be very useful when scripting workflows. 
+Now make a directory for the RNA-seq analysis within the `unix_workshop/` folder using the `mkdir` command. You can use the parents flag (`-p` or `--parents`) to complete the file path by creating any parent directories that do not exist. However, this isn't the case here, since we already have the `unix_workshop/`, but it can be very useful when scripting workflows. 
 
 ```bash
 $ mkdir -p ~/unix_workshop/rnaseq
