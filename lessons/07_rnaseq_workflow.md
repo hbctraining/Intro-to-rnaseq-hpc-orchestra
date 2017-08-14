@@ -8,20 +8,17 @@ Approximate time: 90 minutes
 
 ## Learning Objectives:
 
-* Continue through the RNA-Seq workflow to align reads to the reference genome 
-* Learning intricacies of various tools used in NGS analysis (parameters, usage, etc)
+* Describe and implement the RNA-Seq workflow to align reads to the reference genome 
+* Describe tools and methods within the RNAseq work-flow
 * Assessing input and output filetypes
 
 ## Running a Workflow
 
 ### Setting up
 
-To get started with this lesson, we will login to the cluster but this time we are going to ask for 6 cores. We will do this by adding `-n 6` to our bsub command:
+To get started with this lesson, we will start an interactive session and ask for 6 cores, by adding `-n 6` to the bsub command:
 
 ```bash
-ssh username@orchestra.med.harvard.edu
-(enter password)
-
 $ bsub -Is -n 6 -q interactive bash	
 ```
 
