@@ -1,16 +1,16 @@
 ---
 title: "Quality control using FASTQC"
-author: "Bob Freeman, Mary Piper"
-date: 2017-05-31
+author: "Mary Piper, Radhika Khetani"
+date: 2017-08-14
 duration: 85 minutes
 ---
 
 ## Learning Objectives:
 
-* Learn how to evaluate the quality of your NGS data using the program FastQC
+* Evaluate the quality of your NGS data using FastQC
 * Use a `for loop` to automate operations on multiple files
-* Create a job submission script to automate quality assessment
-* Learning best practices for NGS analysis
+* Create and run a job submission script to automate quality assessment
+* Describe best practices for NGS analysis
 
 ## Quality Control of FASTQ files
 
@@ -21,7 +21,7 @@ A critical first step in the analysis of your NGS data is assessing the quality 
 
 ## Assessing quality with FastQC
 
-Since we have our directory structure set up, and we know about what information is stored in a FASTQ file, the next step is to examine quality metrics for our data.
+Now we understand what information is stored in a FASTQ file, the next step is to examine quality metrics for our data.
 
 [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) provides a simple way to do some quality control checks on raw sequence data coming from high throughput sequencing pipelines. It provides a modular set of analyses which you can use to give a quick impression of whether your data has any problems of which you should be aware before doing any further analysis.
 
