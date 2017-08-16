@@ -12,7 +12,7 @@ Differential expression analysis
 
 At the end of the workflow from the last lesson, our final end product was a count matrix. This is a matrix in which each row represents a gene (or feature) and each column corresponds to a sample. In our dataset, we have two sample classes (control and Mov10oe) and we want to assess the difference in expression between these groups on a gene-by-gene basis.
 
-<img src="../img/de_variation.png">
+<img src="../img/de_variation.png" width=400>
 
 Intuitively, it would seem that since we know which samples belong to which group we could just compute a fold-change for each gene and then rank genes by that value. Easy, right? Not exactly. The problem is, the gene expression that we are observing is not just a result of the differences between the groups that we are investigating, rather it is a measurement of the sum of many effects. In a given biological sample the transcriptional patterns will also be changing with respect to various extraneous factors; some that we are aware of (i.e demographic factors, batch information) and other noise that we cannot attribute to any particular source. The goal of differential expression analysis to determine the relative role of these effects, and to separate the “interesting” from the “uninteresting”.
 
@@ -23,36 +23,36 @@ Intuitively, it would seem that since we know which samples belong to which grou
 
 R is a powerful language that can be very useful for NGS data analysis, and there are many popular packages for working with RNA-Seq count data. Some of these packages include [edgeR](https://www.bioconductor.org/packages/release/bioc/vignettes/edgeR/inst/doc/edgeRUsersGuide.pdf), [DESeq2](http://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.pdf), and [limma-voom](http://www.genomebiology.com/2014/15/2/R29). All of these tools use statistical modeling of the count data to test each gene against the null hypothesis and evaluate whether or not it is significantly differentially expressed. 
 
-<img src="../img/de_norm_counts_var.png">
+<img src="../img/de_norm_counts_var.png" width=400>
 
 These methods determine, for each gene, whether the differences in expression (counts) **between groups** is significant given the amount of variation observed **within groups** (replicates). To test for significance, we need an appropriate statistical model that accurately performs normalization (to account for differences in sequencing depth, etc.) and variance modeling (to account for few numbers of replicates and large dynamic expression range). The details on how each package works is described thoroughly within each of the respective vignettes.
 
 
 ### Running R scripts
 
-In order to run R on Orchestra, let's first log on to the cluster. But this time, note the addition of `-X` in our command. A number of programs with graphical user interfaces (e.g. R, Matlab) use the X11 system which lets the program run on an remote computer, but display the graphics on your desktop. On the Orchestra cluster, any graphics in R that are directly plotted to file also require X11 forwarding. To do this, you need to have an X11 server running on your desktop, and your SSH connection needs to have X11 forwarding enabled. 
+In order to run R on Orchestra, let's first log on to the cluster and start an interactive session.
 
-There are different instructions provided below depending on your operating system:
+	$ bsub -Is -q interactive bash 
 
-**For Mac Users**
-Install [Xquartz](http://xquartz.macosforge.org/landing/) and have it running on your laptop, and use the xterm to login to Orchestra:
 
-	$ ssh -X user_name@orchestra.med.harvard.edu
-
-**For Windows Users**
-Install [Xming](http://sourceforge.net/projects/xming/) and have it running on your laptop.
-In PuTTY:
-
-`Connection -> SSH -> X11 -> Enable X11 forwarding`
-
-![puttyX11](../img/puttyssh.png)
-
-Then login in "session" with `orchestra.med.harvard.edu`.
+> **NOTE:** A number of programs with graphical user interfaces (e.g. R, Matlab) use the X11 system which lets the program run on an remote computer, but display the graphics on your desktop. (On the Orchestra cluster, any graphics in R that are directly plotted to file also require X11 forwarding?). To do this, you need to have an X11 server running on your desktop, and your SSH connection needs to have X11 forwarding enabled. 
+> 
+> There are different instructions provided below depending on your operating system:
+> 
+> **For Mac Users:** Install [Xquartz](http://xquartz.macosforge.org/landing/) and have it running on your laptop, and use the xterm to login to Orchestra:
+> 
+> 	`$ ssh -X user_name@orchestra.med.harvard.edu`
+> 
+> **For Windows Users**
+> Install [Xming](http://sourceforge.net/projects/xming/) and have it running on your laptop.
+> 1. Open GitBash from the Start Menu.
+> 2.Export display environment on the bash command: `export DISPLAY=localhost:0`
+> 3. ssh to the target machine with x11 forwarding enabled: `ssh -XY usrname@orchestra.med.harvard.edu`
 
 Once you are in, start an interactive session and navigate to the `rnaseq_project` directory:
 
 	$ bsub -Is -q interactive bash
-	$ cd unix_workshop/rnaseq_project
+	$ cd unix_workshop/rnaseq
 
 We will be running an R script that uses the R package [edgeR](https://www.bioconductor.org/packages/release/bioc/vignettes/edgeR/inst/doc/edgeRUsersGuide.pdf) to identify differentially expressed genes. This package is available through the [Bioconductor](https://www.bioconductor.org/), a repository of packages for the analysis of high-throughput genomic data. There are also a few other packages that are required to generate some additional figures.
 
@@ -172,6 +172,143 @@ Take your gene list and paste it in the `Query' box.
 ![genemania](../img/genemania.png)
 
 > Use the significant gene list generated from the analysis we performed in class (~40 genes) as input to GeneMANIA. Using only pathway and coexpression data as evidence, take a look at the network that results. Can you predict anything functionally from this set of genes? 
+
+
+In addition, we need to be able to use the resulting non-normalized values which contain decimal places as input to create the DESeq object. Finally, to use DESeq2 we need to be able to tell which transcript is associated with which gene, since DESeq2 performs gene-level differential expression.
+
+### Setting up to run DESeq2 on pseudocount data:
+
+You can download the directory with the quant.sf files for the 8 full datasets using the link below. Once you have them downloaded continue to follow the set of instructions:
+
+1. [Download Salmon files](https://www.dropbox.com/s/aw170f8zge01jpq/salmon.zip?dl=0)
+2. Decompress (unzip) the zip archive and move the folder to an appropriate location (i.e `~/Desktop`)
+3. Open RStudio and select 'File' -> 'New Project'  -> 'Existing Directory' and navigate to the `salmon` directory 
+4. Open up a new R script ('File' -> 'New File' -> 'Rscript'), and save it as `salmon_de.R`
+
+Your Rstudio interface should look something like the screenshot below:
+
+<img src="../img/salmon_rstudio.png" size=600>
+
+The developers of DESeq2 have developed a package that can make the conversion of alignment-free methods of quantification compatible for DESeq2. This package is called [`tximport`](https://bioconductor.org/packages/release/bioc/html/tximport.html) and is available through Bioconductor. `tximport` imports transcript-level abundance, estimated counts and transcript lengths, and summarizes this into matrices for use with downstream gene-level analysis packages. 
+
+**Step 1:** Install the `tximport` package and the `readr` package (you'll only need to do this once):
+    
+```R
+# Install from Bioconductor
+source("http://bioconductor.org/biocLite.R")
+biocLite("tximport")
+biocLite("readr")
+```
+
+**Step 2:** Load the required libraries:
+
+```R
+# Load libraries
+library(tximport)
+library(readr)
+library(DESeq2)
+library(biomaRt) # tximport requires gene symbols as row names
+
+```
+
+**Step 3:** Load the quantification data that was output from Salmon:
+
+```R
+## List all directories containing data  
+samples <- list.files(path = ".", full.names = F, pattern="\\.salmon$")
+    
+## Obtain a vector of all filenames including the path
+files <- file.path(samples, "quant.sf")
+    
+## Since all quant files have the same name it is useful to have names for each element
+names(files) <-  samples
+ ```
+    
+> **OPTION 2: An alternative to this is having absolute paths instead of relative paths.** This would be useful so you can run this from anywhere in your filesystem.
+>
+
+```R
+## DO NOT RUN
+dir <- getwd()
+files <- file.path(dir, samples, "quant.sf")
+	
+## Create your own function
+assignNames <- function(x){
+		strsplit(x, "/")[[1]][6]
+		}
+names(files) <- sapply(files, assignNames, USE.NAMES=F)
+```
+
+Either of these methods will work, or even a combination of the two. The **main objective here is to add names to our quant files which will allow us to easily discriminate between samples in the final output matrix**. 
+
+**Step 4.** Create a dataframe containing Ensembl Transcript IDs and Gene symbols
+
+Our Salmon index was generated with transcript sequences listed by Ensembl IDs, but `tximport` needs to know **which genes these transcripts came from**, so we need to use the `biomaRt` package to extract this information. However, since BiomaRt has been a little unreliable we are actually not going to use this code right now.
+
+> *NOTE:* Keep in mind that the Ensembl IDs listed in our Salmon output contained version numbers (i.e ENST00000632684.1). If we query Biomart with those IDs it will not return anything. Therefore, before querying Biomart in R do not forget to strip the version numbers from the Ensembl IDs.
+
+
+```R
+## DO NOT RUN
+
+# Create a character vector of Ensembl IDs		
+ids <- read.delim(files[1], sep="\t", header=T)    # extract the transcript ids from one of the files
+ids <- as.character(ids[,1])
+require(stringr)
+ids.strip <- str_replace(ids, "([.][0-9])", "")
+
+# Create a mart object
+# Note that we are using an archived host, since "www.ensembl.org" gave us an error
+mart <- useDataset("hsapiens_gene_ensembl", useMart("ENSEMBL_MART_ENSEMBL", host="mar2016.archive.ensembl.org"))
+
+# Get official gene symbol and Ensembl gene IDs
+tx2gene <- getBM(
+    filters= "ensembl_transcript_id", 
+     attributes= c("ensembl_transcript_id", "external_gene_name"),
+     values= ids.strip,
+     mart= mart)
+     
+```
+
+**We have already run the above code for you and saved the output in a text file which is in the salmon directory.** Load it in using: 
+
+```R
+tx2gene <- read.delim("tx2gene.txt",sep="\t")
+```
+    
+**Step 5:** Run tximport to summarize gene-level information    
+```R
+?tximport   # let's take a look at the arguments for the tximport function
+
+txi <- tximport(files, type="salmon", txIn = TRUE, txOut = FALSE, tx2gene=tx2gene, reader=read_tsv, ignoreTxVersion=TRUE)
+```
+### Output from `tximport`
+
+The `txi` object is a simple list with three matrices: abundance, counts, length. 
+```R
+attributes(txi)
+```
+A final element 'countsFromAbundance' carries through the character argument used in the tximport call. The length matrix contains the average transcript length for each gene which can be used as an offset for gene-level analysis. 
+
+
+### Using DESeq2 for DE analysis with pseudocounts
+
+```R    
+library(DESeq2)   # load this if you have not loaded it earlier
+
+## Create a sampletable/metadata
+
+# Before we create this metadata object, let's see what the sample (column) order of the counts matrix is:
+colnames(txi$counts)
+
+condition=factor(c(rep("Ctl",3), rep("KD", 2), rep("OE", 3)))
+sampleTable <- data.frame(condition, row.names = colnames(txi$counts))
+
+## Create a DESeqDataSet object
+dds <- DESeqDataSetFromTximport(txi, sampleTable, ~ condition)
+```
+
+Now you have created a DESeq object to proceed with DE analysis as we discussed in the last session!
 
 
 ### Resources for R
