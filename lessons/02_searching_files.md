@@ -78,7 +78,7 @@ we're redirecting the output from the terminal (all the stuff that went
 whizzing by) to something else. In this case, we want to print it
 to a file, so that we can look at it later.
 
-The redirection command for putting something in a file is `>`
+**The redirection command for putting something in a file is `>`:**
 
 Let's try it out and put all the sequences that contain 'NNNNNNNNNN'
 from all the files into another file called `bad_reads.txt`.
@@ -95,6 +95,8 @@ $ ls -l
 ```
 Take a look at the file and see if it contains what you think it should. *NOTE: If we already had a file named `bad_reads.txt` in our directory, it would have overwritten it without any warning.*
  
+**The redirection command for appending something to an existing file is `>>`:**
+
 If we use `>>`, it will append to rather than overwrite a file.  This can be useful for saving more than one search, for example.
     
 ```bash
