@@ -78,7 +78,7 @@ we're redirecting the output from the terminal (all the stuff that went
 whizzing by) to something else. In this case, we want to print it
 to a file, so that we can look at it later.
 
-**The redirection command for putting something in a file is `>`:**
+**The redirection command for writing something to file is `>`:**
 
 Let's try it out and put all the sequences that contain 'NNNNNNNNNN'
 from all the files into another file called `bad_reads.txt`.
