@@ -1,7 +1,7 @@
 ---
 title: "Quantitation of transcript abundance using Salmon"
 author: "Mary Piper and Meeta Mistry"
-date: "Thursday, January 19th, 2017"
+date: "Monday, August 21, 2017"
 ---
 
 Contributors: Mary Piper and Meeta Mistry
@@ -16,13 +16,13 @@ Approximate time: 1.25 hours
 
 ## Alignment-free quantification of gene expression
 
-In the standard RNA-seq pipeline that we have presented so far, we have taken our reads post-QC and aligned them to the genome using our transcriptome annotation (GTF) as guidance. The goal is to identify the genomic location where these reads originated from. **Another strategy for quantification which has more recently been introduced involves transcriptome mapping**. Tools that fall in this category include [Kallisto](https://pachterlab.github.io/kallisto/about), [Sailfish](http://www.nature.com/nbt/journal/v32/n5/full/nbt.2862.html) and [Salmon](https://combine-lab.github.io/salmon/); each working slightly different from one another. (For this workshop we will explore Salmon in more detail.) Common to all of these tools is that we **avoid base-to-base alignment of the reads**, which is a time-consuming step, and these tools **provide quantification estimates much faster than do standard approaches** (typically 20 times faster) with improvements in accuracy. These estimates, often referred to as 'pseudocounts' are then converted for use with DGE tools like DESeq2. 
+In the standard RNA-seq pipeline that we have presented so far, we have taken our reads post-QC and aligned them to the genome using our transcriptome annotation (GTF) as guidance. The goal is to identify the genomic location where these reads originated from. **Another strategy for quantification which has more recently been introduced involves transcriptome mapping**. Tools that fall in this category include [Kallisto](https://pachterlab.github.io/kallisto/about), [Sailfish](http://www.nature.com/nbt/journal/v32/n5/full/nbt.2862.html) and [Salmon](https://combine-lab.github.io/salmon/); each working slightly different from one another. (For this workshop we will explore Salmon in more detail.) Common to all of these tools is that we **avoid base-to-base alignment of the reads**, which is a time-consuming step, and these tools **provide quantification estimates much faster than do standard approaches** (typically 20 times faster) with improvements in accuracy. These estimates, often referred to as 'pseudocounts', are then converted for use with DGE tools like DESeq2 or the estimates can be used directly for isoform-level differential expression using a tool like [Sleuth](http://www.biorxiv.org/content/biorxiv/early/2016/06/10/058164.full.pdf). 
 
 <img src="../img/alignmentfree_workflow_june2017.png" width="500">
 
 ### What is Salmon?
 
-[Salmon](http://salmon.readthedocs.io/en/latest/salmon.html#using-salmon) is based on the philosophy of lightweight algorithms, which uses the sequence of genes or transcripts as input (in FASTA format) and do not align the whole read. However, many of these lightweight tools, in addition to the more traditional alignment-based tools, lack sample-specific bias models for transcriptome-wide abundance estimation. Sample-specific bias models are needed to account for known biases present in RNA-Seq data including:
+[Salmon](http://salmon.readthedocs.io/en/latest/salmon.html#using-salmon) is based on the philosophy of lightweight algorithms, which use the sequence of genes or transcripts as input (in FASTA format) and do not align the whole read. However, many of these lightweight tools, in addition to the more traditional alignment-based tools, lack sample-specific bias models for transcriptome-wide abundance estimation. Sample-specific bias models are helpful when needing to account for known biases present in RNA-Seq data including:
 
 - GC bias
 - positional coverage biases
@@ -30,7 +30,23 @@ In the standard RNA-seq pipeline that we have presented so far, we have taken ou
 - fragment length distribution
 - strand-specific methods
 
-If not accounted for, these biases can lead to unacceptable false positive rates in differential expression studies [[1](http://salmon.readthedocs.io/en/latest/salmon.html#quasi-mapping-based-mode-including-lightweight-alignment)]. The **Salmon algorithm learns these sample-specific biases and accounts for them in the transcript abundance estimates** by combining a quasi-mapping approach with a dual inference method that is used to account for sample-specific biases and parameters. Salmon is extremely fast at "mapping" reads to the transcriptome and often more accurate than standard aproaches [[2](http://salmon.readthedocs.io/en/latest/salmon.html#quasi-mapping-based-mode-including-lightweight-alignment)]. 
+If not accounted for, these biases can lead to unacceptable false positive rates in differential expression studies [[1](http://salmon.readthedocs.io/en/latest/salmon.html#quasi-mapping-based-mode-including-lightweight-alignment)]. The **Salmon algorithm can learn these sample-specific biases and account for them in the transcript abundance estimates**. Salmon is extremely fast at "mapping" reads to the transcriptome and often more accurate than standard aproaches [[2](http://salmon.readthedocs.io/en/latest/salmon.html#quasi-mapping-based-mode-including-lightweight-alignment)]. 
+
+For example, in a paper comparing the accuracy of different alignment/counting and pseudoalignment methods, Robert et. al used simulated data and 12 different methods to estimate the gene expression of  1000 perfect RNA-Seq read pairs from each of of the genes [[3] (https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0734-x)]. As shown in the figures below taken from the paper, the standard method of using standard alignment and counting methods such as STAR/htseq or Tophat2/htseq result in underestimates of many genes - particularly those genes comprised of multimapping reads [[3] (https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0734-x)]. 
+
+<img src="../img/pseudo_count_comparison-star.png" width="500">
+
+_**NOTE:** Tails to the left indicate underestimates of gene expression, while tails to the right indicate overestimates of gene expression._
+
+While the STAR/htseq standard method of alignment and counting is a bit conservative and can result in false negatives, Cufflinks tends to overestimate gene expression and results in many false positives, which is why Cufflinks is generally not recommended for gene expression quantification.
+
+<img src="../img/pseudo_count_comparison-cufflinks.png" width="500">
+
+Finally, the most accurate quantification of gene expression was achieved using the pseudo-alignement tool Sailfish (if used without bias correction).
+
+<img src="../img/pseudo_count_comparison-sailfish.png" width="500">
+
+Pseudo-alignment tools such as Sailfish, Kallisto, and Salmon have generally been found to yield the most accurate estimations of gene expression. Salmon is considered to have some improvements relative to Sailfish, and it is considered to give very similar results to Kallisto. 
 
 ### How does Salmon estimate transcript abundances?
 Similar to standard base-to-base alignment approaches, the quasi-mapping approach utilized by Salmon requires a reference index to determine the position and orientation information for where the fragments best "map" prior to quantification [[1](https://academic.oup.com/bioinformatics/article/32/12/i192/2288985/RapMap-a-rapid-sensitive-and-accurate-tool-for)]. 
