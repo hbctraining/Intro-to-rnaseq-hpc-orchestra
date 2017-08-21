@@ -78,7 +78,7 @@ we're redirecting the output from the terminal (all the stuff that went
 whizzing by) to something else. In this case, we want to print it
 to a file, so that we can look at it later.
 
-**The redirection command for writing something to file is `>`:**
+**The redirection command for writing something to file is `>`.**
 
 Let's try it out and put all the sequences that contain 'NNNNNNNNNN'
 from all the files into another file called `bad_reads.txt`.
@@ -95,7 +95,7 @@ $ ls -l
 ```
 Take a look at the file and see if it contains what you think it should. *NOTE: If we already had a file named `bad_reads.txt` in our directory, it would have overwritten it without any warning.*
  
-**The redirection command for appending something to an existing file is `>>`:**
+**The redirection command for appending something to an existing file is `>>`.**
 
 If we use `>>`, it will append to rather than overwrite a file.  This can be useful for saving more than one search, for example.
     
@@ -111,7 +111,11 @@ Since our `bad_reads.txt` file isn't a raw_fastq file, we should move it to a di
 $ mv bad_reads.txt ../other/
 ```
 
-There's one more useful redirection command that we're going to show, and that's called the pipe command, and it is `|`. It's probably not a key on your keyboard you use very much. What `|` does is take the output that went scrolling by on the terminal and runs it through another command. When it was all whizzing by before, we wished we could just slow it down and look at it, like we can with `less`. Well it turns out that we can! We pipe the `grep` command to `less` or to `head` to just see the first few lines.
+There's one more useful redirection command that we're going to show, and that's called the pipe command. 
+
+**The redirection command for using the output of a command as input for a different command is `|`.
+
+It's probably not a key on your keyboard you use very much. What `|` does is take the output that went scrolling by on the terminal and runs it through another command. When it was all whizzing by before, we wished we could just slow it down and look at it, like we can with `less`. Well it turns out that we can! We pipe the `grep` command to `less` or to `head` to just see the first few lines.
 
 ```bash
 $ grep -B1 -A2 NNNNNNNNNN Mov10_oe_1.subset.fq | less
