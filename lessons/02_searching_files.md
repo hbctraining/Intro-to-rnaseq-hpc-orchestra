@@ -123,7 +123,7 @@ $ grep -B1 -A2 NNNNNNNNNN Mov10_oe_1.subset.fq | less
 
 Now we can use the arrows to scroll up and down and use `q` to get out.
 
-We can also do count the number of lines using the `wc` command. `wc` stands for *word count*. It counts the number of lines or characters. So, we can use it to count the number of lines we're getting back from our `grep` command using the `-l` argument. And that will magically tell us how many bad sequences we have in the file.
+We can also do count the number of lines using the `wc` command. `wc` stands for *word count*. It counts the number of words, lines or characters. So, we can use it to count the number of lines we're getting back from our `grep` command using the `-l` argument. And that will magically tell us how many bad sequences we have in the file.
 
 ```bash
 $ grep NNNNNNNNNN Mov10_oe_1.subset.fq | wc -l
