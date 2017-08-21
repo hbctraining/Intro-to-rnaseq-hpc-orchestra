@@ -113,7 +113,7 @@ $ mv bad_reads.txt ../other/
 
 There's one more useful redirection command that we're going to show, and that's called the pipe command. 
 
-**The redirection command for using the output of a command as input for a different command is `|`.
+**The redirection command for using the output of a command as input for a different command is `|`.**
 
 It's probably not a key on your keyboard you use very much. What `|` does is take the output that went scrolling by on the terminal and runs it through another command. When it was all whizzing by before, we wished we could just slow it down and look at it, like we can with `less`. Well it turns out that we can! We pipe the `grep` command to `less` or to `head` to just see the first few lines.
 
