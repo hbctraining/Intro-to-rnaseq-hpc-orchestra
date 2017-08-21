@@ -30,12 +30,13 @@ These methods determine, for each gene, whether the differences in expression (c
 
 ### Running R scripts
 
-In order to run R on Orchestra, let's first log on to the cluster and start an interactive session.
+In order to run R on Orchestra, let's first log on to the cluster and start an interactive session. Note that this time we are adding the `-X` flag to the `ssh` command. This flag is required for X11 forwarding. For more details on how to set this up see the note below. 
 
+	$ ssh -X ecommonsID@orchestra.med.harvard.edu
 	$ bsub -Is -q interactive bash 
 
 
-> **NOTE:** A number of programs with graphical user interfaces (e.g. R, Matlab) use the X11 system which lets the program run on an remote computer, but display the graphics on your desktop. (On the Orchestra cluster, any graphics in R that are directly plotted to file also require X11 forwarding?). To do this, you need to have an X11 server running on your desktop, and your SSH connection needs to have X11 forwarding enabled. 
+> **NOTE:** A number of programs with graphical user interfaces (e.g. R, Matlab) use the X11 system which lets the program run on an remote computer, but display the graphics on your desktop. On the Orchestra cluster, any graphics in R that are directly plotted to file also require X11 forwarding. To do this, you need to have an X11 server running on the client (your desktop), and your SSH connection needs to have X11 forwarding enabled. 
 > 
 > There are different instructions provided below depending on your operating system:
 > 
@@ -49,16 +50,15 @@ In order to run R on Orchestra, let's first log on to the cluster and start an i
 > 2.Export display environment on the bash command: `export DISPLAY=localhost:0`
 > 3. ssh to the target machine with x11 forwarding enabled: `ssh -XY usrname@orchestra.med.harvard.edu`
 
-Once you are in, start an interactive session and navigate to the `rnaseq_project` directory:
+Once you are in, navigate to the `rnaseq_project` directory:
 
-	$ bsub -Is -q interactive bash
 	$ cd unix_workshop/rnaseq
 
-We will be running an R script that uses the R package [edgeR](https://www.bioconductor.org/packages/release/bioc/vignettes/edgeR/inst/doc/edgeRUsersGuide.pdf) to identify differentially expressed genes. This package is available through the [Bioconductor](https://www.bioconductor.org/), a repository of packages for the analysis of high-throughput genomic data. There are also a few other packages that are required to generate some additional figures.
+We will be running an R script that uses the R package [DESeq2](http://bioconductor.org/packages/release/bioc/html/DESeq2.html) to identify differentially expressed genes. This package is available through the [Bioconductor](https://www.bioconductor.org/), a repository of packages for the analysis of high-throughput genomic data. There are also a few other packages that are required to generate some additional figures.
 
 We first need to load the R module:
 
-	$ module load stats/R/3.2.1
+	$ module load stats/R/3.3.1
 
 
 You can open R by simply typing `R` at the command prompt and pressing `Enter`. You are now in the R console (note that the command prompt has changed to a `>` instead of a `$`):
