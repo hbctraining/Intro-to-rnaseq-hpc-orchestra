@@ -93,7 +93,7 @@ happened. But you should have a new file called `bad_reads.txt`.
 ```bash
 $ ls -l
 ```
-Take a look at the file and see if it contains what you think it should. *NOTE: If we already had a file named `bad_reads.txt` in our directory, it would have over-written it without any warning.*
+Take a look at the file and see if it contains what you think it should. *NOTE: If we already had a file named `bad_reads.txt` in our directory, it would have overwritten it without any warning.*
  
 If we use `>>`, it will append to rather than overwrite a file.  This can be useful for saving more than one search, for example.
     
