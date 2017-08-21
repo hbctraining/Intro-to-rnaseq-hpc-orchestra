@@ -84,7 +84,7 @@ Let's try it out and put all the sequences that contain 'NNNNNNNNNN'
 from all the files into another file called `bad_reads.txt`.
 
 ```bash
-$ grep -B 1 -A 2 NNNNNNNNNN Mov10_oe_1.subset.fq > bad_reads.txt
+$ grep -B1 -A2 NNNNNNNNNN Mov10_oe_1.subset.fq > bad_reads.txt
 ```
 
 The prompt should sit there a little bit, and then it should look like nothing
@@ -98,7 +98,7 @@ Take a look at the file and see if it contains what you think it should. *NOTE: 
 If we use `>>`, it will append to rather than overwrite a file.  This can be useful for saving more than one search, for example.
     
 ```bash
-$ grep -B 1 -A 2 NNNNNNNNNN Mov10_oe_2.subset.fq >> bad_reads.txt
+$ grep -B1 -A2 NNNNNNNNNN Mov10_oe_2.subset.fq >> bad_reads.txt
 
 $ ls -l
 ```
