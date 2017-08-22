@@ -19,7 +19,7 @@ Project organization is one of the most important parts of a sequencing project,
 
 Importantly, the methods and approaches needed for bioinformatics are the same required in a wet lab environment. **Planning, documentation, and organization** are essential to good, reproducible science. 
 
-Today we will breifly talk about each of these concepts. If you are interested in Research Data Management (RDM), the HMS Data Management Working Group has [a website](https://datamanagement.hms.harvard.edu/) with more information, resources and contacts.
+Today we will breifly talk about each of these concepts. If you are interested in Research Data Management (RDM), the [HMS Data Management Working Group](https://datamanagement.hms.harvard.edu/hms-data-management-working-group) has [a website](https://datamanagement.hms.harvard.edu/) with more information, resources and contacts.
 
 ### Planning
 
