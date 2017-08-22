@@ -134,7 +134,7 @@ module load seq/samtools/1.3
 PATH=/opt/bcbio/centos/bin:$PATH 	# for using featureCounts if not already in $PATH
 ```
 
-### Prepare for future debugging
+### Preparing for future debugging
 
 In the script, it is a good idea to use `echo` for debugging. `echo` basically displays the string of characters specified within the quotations. When you have strategically place `echo` commands specifying what stage of the analysis is next, in case of failure you can determine the last `echo` statement displayed to troubleshoot the script.
 
@@ -176,7 +176,7 @@ It is best practice to have the script **usage** specified at the top any script
 
 It is okay to specify this everything else is set up, since you will have most clarity about the script only once it is fully done.
 
-### Save and run script
+### Saving and running script
 
 To transfer the contents of the script to Orchestra, you can copy and paste the contents into a new file using `nano`. 
 
@@ -196,7 +196,7 @@ $ sh rnaseq_analysis_on_input_file.sh ~/unix_workshop/rnaseq/raw_data/Mov10_oe_1
 
 **Before we move to the next section, modify the number of cores in the above script to 6 using `nano`, so we can have it run a lot faster when we submit it as an LSF job.**
 
-## Running our script iteratively as a job submission to the LSF scheduler
+## Running the script iteratively as a job submission to the LSF scheduler
 
 The above script will run in an interactive session **one file at a time**. But the whole point of writing this script was to run it on all files at once. How do you think we can do this?
 
@@ -237,7 +237,7 @@ How would you run the above script?
 
 ***
 
-## Parallelizing for efficiency
+## Parallelizing the analysis for efficiency
 
 Parallelization will save you a lot of time with real (large) datasets. To parallelize our analysis, we will still need to write a second script that will call the original script we just wrote. We will still use a `for` loop, but we will be creating a regular shell script and we will be specifying the LSF directives differently. 
 
