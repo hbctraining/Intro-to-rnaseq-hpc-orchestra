@@ -42,7 +42,7 @@ rnaseq/
 
 We previously described a general overview of the steps involved in RNA-Seq analysis, and in this session we will take our clean reads and align them to the reference genome.
 
-![workflow](../img/workflow_alignment.png)
+<img src="../img/RNAseqWorkflow.png" width="400">
 
 
 So let's get started by loading up some of the modules for tools we need for this section: 
@@ -176,12 +176,11 @@ $ STAR --runThreadN 6 \
 
 **Exercise**
 
-How many files do you see in your output directory? Using the `less` command take a look at `Mov10_oe_1_Log.final.out` and answer the following questions:  
-
-1. How many reads are uniquely mapped?
-2. How many reads map to more than 10 locations on the genome?
-3. How many reads are unmapped due to read length?
-
+* How many files do you see in your output directory? 
+* Using the `less` command take a look at `Mov10_oe_1_Log.final.out` and answer the following questions:  
+	1. How many reads are uniquely mapped?
+	2. How many reads map to more than 10 locations on the genome?
+	3. How many reads are unmapped due to read length?
 ***
 
 ### Alignment Outputs (SAM/BAM)
@@ -208,7 +207,7 @@ Once we have our reads aligned to the genome, the next step is to count how many
 
 `featureCounts` only includes and counts those reads that map to a single location (uniquely mapping) and follows the scheme in the figure below for assigning reads to a gene/exon. 
 
-<img src="../img/union.png" width="300">
+<img src="../img/union.png" width="400">
 
 `featureCounts` can also take into account whether your data are **stranded** or not. If strandedness is specified, then in addition to considering the genomic coordinates it will also take the strand into account for counting. If your data are stranded always specify it.
 
