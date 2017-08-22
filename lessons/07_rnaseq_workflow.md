@@ -9,7 +9,7 @@ Approximate time: 90 minutes
 ## Learning Objectives:
 
 * Describe and implement the RNA-Seq workflow to align reads to the reference genome 
-* Describe tools and methods within the RNAseq workflow
+* Describe tools and methods within the RNA-seq workflow
 * Assessing input and output filetypes
 
 ## Setting up to run the RNA-seq workflow
@@ -102,7 +102,7 @@ Then the seeds are stitched together based on the best alignment for the read (s
 
 ### Running STAR
 
-Aligning reads using STAR is a two step process:   
+Aligning reads using STAR is a two-step process:   
 
 1. Create a genome index 
 2. Map reads to the genome
@@ -191,9 +191,10 @@ $ samtools view -h results/STAR/Mov10_oe_1_Aligned.sortedByCoord.out.bam | less
 Scroll through the SAM file and see how the fields correspond to what we expected.
 
 ### Counting reads
-Once we have our reads aligned to the genome, the next step is to count how many reads have been mapped to each gene. The input files required for counting include the BAM file and an associated gene annotation file in GTF format. Today, we will be using the [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) tool to get the *gene* counts. We picked this tool because it is accurate, fast and is relatively easy to use. 
 
-`featureCounts` works by **taking the alignment coordinates for each read and cross-referencing that to the coordinates for *features* described in the GTF**. Most commonly a feature is considered to be a gene, which is the union of all exons (which is also a feature type) that make up that gene. *Please note that this tool is best used for counting reads associated with **genes**, and not for splice isoforms or transcripts.* 
+Once we have our reads aligned to the genome, the next step is to count how many reads have been mapped to each gene. The input files required for counting include the BAM file and an associated gene annotation file in GTF format. [htseq-count](http://htseq.readthedocs.io/en/release_0.9.1/count.html) and [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) are 2 commonly used counting tools. Today, we will be using featureCounts to get the *gene* counts. We picked this tool because it is accurate, fast and is relatively easy to use. 
+
+`featureCounts` works by **taking the alignment coordinates for each read and cross-referencing that to the coordinates for *features* described in the GTF**. Most commonly a feature is considered to be a gene, which is the union of all exons (which is also a feature type) that make up that gene. *Please note that this tool is best used for counting reads associated with **genes**, and not for splice isoforms or transcripts, we will be covering that later today.* 
 
 `featureCounts` only includes and counts those reads that map to a single location (uniquely mapping) and follows the scheme in the figure below for assigning reads to a gene/exon. 
 
@@ -264,7 +265,11 @@ Now let's look at the count matrix:
 ``` bash
 $ less results/counts/Mov10_featurecounts.txt
 ```
-There is information about the genomic coordinates and the length of the gene, we don't need this for the next step and you can use the `cut` command as shown in the note below to select only those columns that you are interested in. A cleaned up version of this count matrix with "raw" counts will be used to perform differential gene expression analysis.
+The count matric that we need to perform differential gene expression analysis needs to look something like this:
+
+<img src="../img/count_matrix.png" width=500>
+
+Since the featureCounts output has additional columns with information about genomic coordinates, gene length etc., we can use the `cut` command to select only those columns that you are interested in. 
 	
 > ``` bash
 > $ cut -f1,7,8,9,10,11,12 results/counts/Mov10_featurecounts.txt > results/counts/Mov10_featurecounts.Rmatrix.txt
@@ -278,7 +283,13 @@ There is information about the genomic coordinates and the length of the gene, w
 > For paired-end (PE) data, the bam file contains information about whether both read1 and read2 mapped and if they were at roughly the correct distance from each other, that is to say if they were "properly" paired. For most counting tools, only properly paired reads are considered by default, and each read pair is counted only once as a single "fragment". 
 > 
 > For counting PE fragments associated with genes, the input bam files need to be sorted by read name (i.e. alignment information about both read pairs in adjoining rows). The alignment tool might sort them for you, but watch out for how the sorting was done. If they are sorted by coordinates (like with STAR), you will need to use `samtools sort` to re-sort them by read name before using as input in featureCounts. If you do not sort you BAM file by read name before using as input, featureCounts assumes that almost all the reads are not properly paired.
+
 ***
+
+### Next Steps: Performing DE analysis on the count matrix
+
+This text file with a matrix of raw counts can be used as input to tools like [DESeq2](http://bioconductor.org/packages/release/bioc/html/DESeq2.html), [EdgeR](http://bioconductor.org/packages/release/bioc/html/edgeR.html) and [limma-voom](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29). Running the DE analysis tools are outside the scope of this workshop since they require a working knowledge of R. We do have [additional materials] that you can go through for performing these analyses using the MOV10 dataset, and we might walk through them if time permits today. 
+
 ### Visual assessment of the alignment
 
 Index the BAM file for visualization with IGV:
