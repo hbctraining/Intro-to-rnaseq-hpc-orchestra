@@ -15,6 +15,18 @@ Once you have optimized all the tools and parameters using a single sample, you 
 
 This will ensure that you run every sample with the exact same parameters, and will enable you to keep track of all the tools and their versions. In addition, the script is like a lab notebook, in the future you (or your colleagues) can go back and check the workflow for methods, which enables efficiency and reproducibility.
 
+Before we start with the script, let's check how many cores our interactive session has by using `bjobs`. 
+
+```bash
+$ bjobs
+```
+
+If you already have an interactive session with 2 or more cores, then **do not** start a new interactive session. If you don't, then `exit` out of the one you have and run the following command.
+
+```bash
+$ bsub -Is -n 2 -q interactive bash
+```
+
 ### More Flexibility with variables
 
 We can write a shell script that will run on a specific file, but to make it more flexible and efficient we would prefer that it lets us give it an input fastq file when we run the script. To be able to provide an input to any shell script, we need to use so-called **Positional Parameters**. 
@@ -57,25 +69,31 @@ fq=$1
 >
 > using the `fq` variable => `fastqc $fq`
 
+Next we want to specify how many cores the script should use to run the analysis. This provides us with an easy way to modify the script to run with more or fewer cores without have to replace the number within all commands where cores are specified.
+
+```
+cores=2
+```
+
 Next we'll initialize 2 more variables named `genome` and `gtf`, these will contain the paths to where the reference files are stored. This makes it easier to modify the script for when you want to use a different genome, i.e. you'll just have to change the contents of these variable at the beginning of the script.
 
 ```
 # directory with genome reference FASTA and index files + name of the gene annotation file
 
 genome=/groups/hbctraining/unix_workshop_other/reference_STAR/
-gtf=~/unix_workshop/rnaseq_project/data/reference_data/chr1-hg19_genes.gtf
+gtf=~/unix_workshop/rnaseq/data/reference_data/chr1-hg19_genes.gtf
 ```
 
-We'll create ouput directories, but with the `-p` option. This will make sure that `mkdir` will create the directory only if it does not exist, and it won't throw an error if it does exist.
+We'll create output directories, but with the `-p` option. This will make sure that `mkdir` will create the directory only if it does not exist, and it won't throw an error if it does exist.
 
 ```
 # make all of the output directories
 # The -p option means mkdir will create the whole path if it 
 # does not exist and refrain from complaining if it does exist
 
-mkdir -p ~/unix_workshop/rnaseq_project/results/fastqc/
-mkdir -p ~/unix_workshop/rnaseq_project/results/STAR
-mkdir -p ~/unix_workshop/rnaseq_project/results/counts
+mkdir -p ~/unix_workshop/rnaseq/results/fastqc/
+mkdir -p ~/unix_workshop/rnaseq/results/STAR
+mkdir -p ~/unix_workshop/rnaseq/results/counts
 ```
 
 Now that we have already created our output directories, we can now specify variables with the path to those directories both for convenience but also to make it easier to see what is going on in a long command.
@@ -83,10 +101,10 @@ Now that we have already created our output directories, we can now specify vari
 ```
 # set up output filenames and locations
 
-fastqc_out=~/unix_workshop/rnaseq_project/results/fastqc/
-align_out=~/unix_workshop/rnaseq_project/results/STAR/${base}_
-counts_input_bam=~/unix_workshop/rnaseq_project/results/STAR/${base}_Aligned.sortedByCoord.out.bam
-counts=~/unix_workshop/rnaseq_project/results/counts/${base}_featurecounts.txt
+fastqc_out=~/unix_workshop/rnaseq/results/fastqc/
+align_out=~/unix_workshop/rnaseq/results/STAR/${base}_
+counts_input_bam=~/unix_workshop/rnaseq/results/STAR/${base}_Aligned.sortedByCoord.out.bam
+counts=~/unix_workshop/rnaseq/results/counts/${base}_featurecounts.txt
 ```
 
 This is the last variable we will set up. To ensure that all the output files from the workflow are properly named with sample IDs we should extract the "base name" (or sample ID) from the name of the input file.
@@ -138,16 +156,16 @@ fastqc $fq
 mv *fastqc* $fastqc_out
 
 # Run STAR
-STAR --runThreadN 6 --genomeDir $genome --readFilesIn $fq --outFileNamePrefix $align_out --outFilterMultimapNmax 10 --outSAMstrandField intronMotif --outReadsUnmapped Fastx --outSAMtype BAM SortedByCoordinate --outSAMunmapped Within --outSAMattributes NH HI NM MD AS
+STAR --runThreadN $cores --genomeDir $genome --readFilesIn $fq --outFileNamePrefix $align_out --outFilterMultimapNmax 10 --outSAMstrandField intronMotif --outReadsUnmapped Fastx --outSAMtype BAM SortedByCoordinate --outSAMunmapped Within --outSAMattributes NH HI NM MD AS
 
 # Create BAM index
 samtools index $counts_input_bam
 
 # Count mapped reads
-featureCounts -T 6 -s 2 -a $gtf -o $counts $counts_input_bam
+featureCounts -T $cores -s 2 -a $gtf -o $counts $counts_input_bam
 ```
 
-### Last addition to the scipt
+### Last addition to the script
 
 It is best practice to have the script **usage** specified at the top any script. This should have information such that when your future self, or a co-worker, uses the script they know what it will do and what input(s) are needed. For our script, we should have the following lines of comments right at the top after `#!/bin/bash/`:
 
@@ -158,22 +176,25 @@ It is best practice to have the script **usage** specified at the top any script
 
 It is okay to specify this everything else is set up, since you will have most clarity about the script only once it is fully done.
 
-### Save script and run the workflow
+### Save and run script
 
-To transfer the saved file to Orchestra, you can copy and paste the script as a new file using `nano`.
-
-```bash
-$ cd ~/unix_workshop/rnaseq_project/scripts/
-
-$ nano rnaseq_analysis_on_input_file.sh
-```
-
-*Alternatively, you can save the script on your computer and transfer it to `~/unix_workshop/rnaseq_project/scripts/` using FileZilla.*
-
+To transfer the contents of the script to Orchestra, you can copy and paste the contents into a new file using `nano`. 
 
 ```bash
-$ sh rnaseq_analysis_on_input_file.sh <name of fastq>
+$ cd ~/unix_workshop/rnaseq/scripts/
+
+$ nano rnaseq_analysis_on_input_file.sh 
 ```
+
+*Alternatively, you can save the script on your computer and transfer it to `~/unix_workshop/rnaseq/scripts/` using FileZilla.*
+
+We should all have an interactive session with 2 or more cores, so we can start the script:
+
+```bash
+$ sh rnaseq_analysis_on_input_file.sh ~/unix_workshop/rnaseq/raw_data/Mov10_oe_1.subset.fq
+```
+
+**Before we move to the next section, modify the number of cores in the above script to 6 using `nano`, so we can have it run a lot faster when we submit it as an LSF job.**
 
 ## Running our script iteratively as a job submission to the LSF scheduler
 
@@ -198,7 +219,7 @@ Below is what this second script would look like **\[DO NOT RUN THIS\]**:
 #BSUB -e %J.err       		# File to which standard error will be written
 
 # this `for` loop, will take the fastq files as input and run the script for all of them one after the other. 
-for fq in ~/unix_workshop/rnaseq_project/raw_data/*.fq
+for fq in ~/unix_workshop/rnaseq/raw_data/*.fq
 do
   echo "running analysis on $fq"
   rnaseq_analysis_on_input_file.sh $fq
@@ -231,7 +252,7 @@ This script loops through the same files as in the previous (demo) script, but t
 ```bash
 #! /bin/bash
 
-for fq in ~/unix_workshop/raw_fastq/*.fq
+for fq in ~/unix_workshop/rnaseq/raw_data/*.fq
 do
   
   bsub -q training -n 6 -W 1:30 -R "rusage[mem=4000]" -J rnaseq_mov10 -o %J.out -e %J.err "sh rnaseq_analysis_on_input_file.sh $fq"
@@ -240,7 +261,6 @@ do
   
 done
 ```
-
 Please note that after the `bsub` directives the command `sh rnaseq_analysis_on_input_file.sh $fq` is in quotes.
 
 What you should see on the output of your screen would be the jobIDs that are returned from the scheduler for each of the jobs that your script submitted.
