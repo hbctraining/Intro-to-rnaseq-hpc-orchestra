@@ -244,7 +244,7 @@ Don't forget about the `bkill` command, should something go wrong and you need t
 
 The above scripts will both generate count files for individual samples. Hence, after the script has run, you will have to do some cleanup using the `paste` and `cut` commands to generate a full count matrix wherein the first column is gene names and the rest of the columns are gene counts in each sample (with a header/column name). 
 
-<img src="../img/count_matrix.png" width=400>
+<img src="../img/count_matrix.png" width=500>
 
 Alternatively, you could remove featureCounts from the script, and instead run it on all the BAM files after the jobs finish generating them.
 
