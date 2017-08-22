@@ -16,11 +16,11 @@ Approximate time: 1.25 hours
 
 ## Alignment-free quantification of gene expression
 
-In the standard RNA-seq pipeline that we have presented so far, we have taken our reads post-QC and aligned them to the genome using our transcriptome annotation (GTF) as guidance. The goal is to identify the genomic location where these reads originated from. **Another strategy for quantification which has more recently been introduced involves transcriptome mapping**. Tools that fall in this category include [Kallisto](https://pachterlab.github.io/kallisto/about), [Sailfish](http://www.nature.com/nbt/journal/v32/n5/full/nbt.2862.html) and [Salmon](https://combine-lab.github.io/salmon/); each working slightly different from one another. (For this workshop we will explore Salmon in more detail.) Common to all of these tools is that we **avoid base-to-base alignment of the reads**, which is a time-consuming step, and these tools **provide quantification estimates much faster than do standard approaches** (typically 20 times faster) with **improvements in accuracy**. These estimates, often referred to as 'pseudocounts', are then converted for use with DGE tools like DESeq2 or the estimates can be used directly for isoform-level differential expression using a tool like [Sleuth](http://www.biorxiv.org/content/biorxiv/early/2016/06/10/058164.full.pdf). 
+In the standard RNA-seq pipeline that we have presented so far, we have taken our reads post-QC and aligned them to the genome using our transcriptome annotation (GTF) as guidance. The goal is to identify the genomic location where these reads originated from. **Another strategy for quantification which has more recently been introduced involves transcriptome mapping**. Tools that fall in this category include [Kallisto](https://pachterlab.github.io/kallisto/about), [Sailfish](http://www.nature.com/nbt/journal/v32/n5/full/nbt.2862.html) and [Salmon](https://combine-lab.github.io/salmon/); each working slightly different from one another. (For this workshop we will explore Salmon in more detail.) Common to all of these tools is that **base-to-base alignment of the reads is avoided**, which is a time-consuming step, and these tools **provide quantification estimates much faster than do standard approaches** (typically 20 times faster) with **improvements in accuracy** at the **transcript level**. These transcript expression estimates, often referred to as 'pseudocounts', can be converted for use with DGE tools like DESeq2 or the estimates can be used directly for isoform-level differential expression using a tool like [Sleuth](http://www.biorxiv.org/content/biorxiv/early/2016/06/10/058164.full.pdf). 
 
 <img src="../img/alignmentfree_workflow_june2017.png" width="500">
 
-The improvement in accuracy for lightweight alignment tools in comparison with the standard alignment/counting methods primarily relate to the ability of the lightweight alignment tools to quantify multimapping reads. This has been shown by Robert et. al by comparing the accuracy of 12 different alignment/quantification methods using simulated data to estimate the gene expression of 1000 perfect RNA-Seq read pairs from each of of the genes [[3](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0734-x)]. As shown in the figures below taken from the paper, the standard method of using alignment and counting methods such as STAR/htseq or Tophat2/htseq result in underestimates of many genes - particularly those genes comprised of multimapping reads [[3](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0734-x)]. 
+The improvement in accuracy for lightweight alignment tools in comparison with the standard alignment/counting methods primarily relate to the ability of the lightweight alignment tools to quantify multimapping reads. This has been shown by Robert et. al by comparing the accuracy of 12 different alignment/quantification methods using simulated data to estimate the gene expression of 1000 perfect RNA-Seq read pairs from each of of the genes [[1](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0734-x)]. As shown in the figures below taken from the paper, the standard method of using alignment and counting methods such as STAR/htseq or Tophat2/htseq result in underestimates of many genes - particularly those genes comprised of multimapping reads [[1](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0734-x)]. 
 
 <img src="../img/pseudo_count_comparison-star.png" width="750">
 
@@ -47,17 +47,50 @@ Pseudo-alignment tools such as Sailfish, Kallisto, and Salmon have generally bee
 - fragment length distribution
 - strand-specific methods
 
-If not accounted for, these biases can lead to unacceptable false positive rates in differential expression studies [[1](http://salmon.readthedocs.io/en/latest/salmon.html#quasi-mapping-based-mode-including-lightweight-alignment)]. The **Salmon algorithm can learn these sample-specific biases and account for them in the transcript abundance estimates**. Salmon is extremely fast at "mapping" reads to the transcriptome and often more accurate than standard aproaches [[2](http://salmon.readthedocs.io/en/latest/salmon.html#quasi-mapping-based-mode-including-lightweight-alignment)]. 
+If not accounted for, these biases can lead to unacceptable false positive rates in differential expression studies [[2](http://salmon.readthedocs.io/en/latest/salmon.html#quasi-mapping-based-mode-including-lightweight-alignment)]. The **Salmon algorithm can learn these sample-specific biases and account for them in the transcript abundance estimates**. Salmon is extremely fast at "mapping" reads to the transcriptome and often more accurate than standard aproaches [[2](http://salmon.readthedocs.io/en/latest/salmon.html#quasi-mapping-based-mode-including-lightweight-alignment)]. 
 
 
 ### How does Salmon estimate transcript abundances?
-Similar to standard base-to-base alignment approaches, the quasi-mapping approach utilized by Salmon requires a reference index to determine the position and orientation information for where the fragments best "map" prior to quantification [[1](https://academic.oup.com/bioinformatics/article/32/12/i192/2288985/RapMap-a-rapid-sensitive-and-accurate-tool-for)]. After indexing, **Salmon uses a quasi-mapping approach to estimate the numbers of reads 'mapping' to each transcript, then generates final transcript abundance estimates after modeling sample-specific parameters and biases**. Details regarding the quasi-mapping approach is described in the literature for the Rapmap tool [[3,4]](https://academic.oup.com/bioinformatics/article/32/12/i192/2288985/RapMap-a-rapid-sensitive-and-accurate-tool-for), which provides the underlying algorithm for the quasi-mapping.
+Similar to standard base-to-base alignment approaches, the quasi-mapping approach utilized by Salmon requires a reference index to determine the position and orientation information for where the fragments best "map" prior to quantification [[3](https://academic.oup.com/bioinformatics/article/32/12/i192/2288985/RapMap-a-rapid-sensitive-and-accurate-tool-for)]. After indexing, **Salmon uses a quasi-mapping approach to estimate the numbers of reads 'mapping' to each transcript, then generates final transcript abundance estimates after modeling sample-specific parameters and biases**. Details regarding the quasi-mapping approach is described in the literature for the Rapmap tool [[3](https://academic.oup.com/bioinformatics/article/32/12/i192/2288985/RapMap-a-rapid-sensitive-and-accurate-tool-for)], which provides the underlying algorithm for the quasi-mapping.
 
 
-Briefly, Salmon uses an approach similar to STAR for 'quasi-mapping', such that Salmon searches for the longest sequence that exactly matches the reference transcriptome (MMP). In constrast to STAR, the search for the next MMP does not begin at the next position in the read; instead, the search for the next MMP begins at the next position in the read where it is likely to generate a different set of transcripts than those returned for the previous MMP. Therefore, the entire read is not aligned, only the most informative portions of the read are aligned. The final mappings are generated by determining the set of transcripts appearing in all MMPs for the read. The transcripts, orientation and transcript location are output for each read. 
+Similar to standard base-to-base alignment approaches, the quasi-mapping approach utilized by Salmon requires a reference index to determine the position and orientation information for where the fragments best "map" prior to quantification [[3](https://academic.oup.com/bioinformatics/article/32/12/i192/2288985/RapMap-a-rapid-sensitive-and-accurate-tool-for)]. 
 
->**NOTE:** If there are sequences in the reads that are not in the index they are not counted. As such, trimming is not required when using this method.
+#### **Indexing** 
+
+This step involves creating an index to evaluate the sequences for all possible unique sequences of length k (kmer) in the **transcriptome** (genes/transcripts).
+
+**The index helps creates a signature for each transcript in our reference transcriptome.** The Salmon index has two components:
+
+- a suffix array (SA) of the reference transcriptome
+- a hash table to map each transcript in the reference transcriptome to it's location in the SA (is not required, but improves the speed of "mapping" drastically)
+
+#### **Quasi-mapping and quantification** 
+
+The quasi-mapping approach estimates the numbers of reads mapping to each transcript, then generates final transcript abundance estimates after modeling sample-specific parameters and biases. The quasi-mapping approach is described below, with details provided by the Rapmap tool [[3](https://academic.oup.com/bioinformatics/article/32/12/i192/2288985/RapMap-a-rapid-sensitive-and-accurate-tool-for)], which provides the underlying algorithm for the quasi-mapping.
+
+- **Step 1: Quasi mapping and abundance estimation**
+
+	<img src="../img/salmon_quasialignment.png" width="750">
 	
+
+	>RapMap: a rapid, sensitive and accurate tool for mapping RNA-seq reads to transcriptomes. A. Srivastava, H. Sarkar, N. Gupta, R. Patro. Bioinformatics (2016) 32 (12): i192-i200.
+	
+	To determine the best mapping for each read/fragment and estimate the number of reads/fragments mapping to each transcript, the quasi-mapping procedure performs the following steps [[3](https://academic.oup.com/bioinformatics/article/32/12/i192/2288985/RapMap-a-rapid-sensitive-and-accurate-tool-for)]:
+
+	1. The read is scanned from left to right until a k-mer that appears in the hash table is discovered.
+	2. The k-mer is looked up in the hash table and the SA intervals are retrieved, giving all suffixes containing that k-mer
+	3. The maximal matching prefix (MMP) is identified by finding the longest read sequence that exactly matches the reference suffixes.
+	4. We could search for the next MMP at the position following the MMP, but often natural variation or a sequencing error in the read is the cause to the mismatch from the reference, so the beginning the search at this position would likely return the same set of transcripts. Therefore, Salmon identifies the next informative position (NIP), which is the next position in the read where the SA search is likely to return a different set of transcripts than those returned for the previous MMP.
+	5. This process is repeated until the end of the read.
+	6. The final mappings are generated by determining the set of transcripts appearing in all MMPs for the read. The transcripts, orientation and transcript location are output for each read.
+	
+>
+> **NOTE:** that if there are k-mers in the reads that are not in the index they are not counted. As such, trimming is not required when using this method.
+	
+	
+- **Step 2: Improving abundance estimates**
+Using multiple complex modeling approaches, like Expectation Maximization (EM), Salmon can also correct the abundance estimates for any sample-specific biases/factors [[4](http://www.nature.com.ezp-prod1.hul.harvard.edu/nmeth/journal/v14/n4/full/nmeth.4197.html?WT.feed_name=subjects_software&foxtrotcallback=true)]. Generally, this step results in more accurate transcript abundance estimation.
 
 ## Running Salmon on Orchestra
 
@@ -101,7 +134,7 @@ Get the transcript abundance estimates using the `quant` command and the paramet
 To run the quantification step on a single sample we have the command provided below. Let's try running it on our subset sample for `Mov10_oe_1.subset.fq`:
 
 ```bash
-$ salmon quant -i /groups/hbctraining/ngs-data-analysis-longcourse/rnaseq/salmon.ensembl37.idx/ \
+$ salmon quant -i /groups/hbctraining/unix_workshop_other/salmon.ensembl37.idx/ \
  -l SR \
  -r ~/unix_workshop/rnaseq/raw_data/Mov10_oe_1.subset.fq \
  -o Mov10_oe_1.subset.salmon \
@@ -163,22 +196,22 @@ Now we can create a for loop to iterate over all FASTQ samples, and submit a job
 
 Next comes the Salmon command. Note, that we are adding a parameter called `--numBootstraps` to the Salmon command. Salmon has the ability to optionally compute bootstrapped abundance estimates. **Bootstraps are required for estimation of technical variance**. Bootstrapping essentially takes a different sub-sample of reads for each bootstapping run for estimating the transcript abundances. The technical variance is the variation in transcript abundance estimates calculated for each of the different sub-samplings (or bootstraps). We will discuss this in more detail in the next lesson.
 
-> *NOTE:* We are iterating over FASTQ files in the full dataset directory, located at `/groups/hbctraining/ngs-data-analysis-longcourse/rnaseq/full_dataset/`
+> *NOTE:* We are iterating over FASTQ files in the full dataset directory, located at `/groups/hbctraining/unix_workshop_other/full_dataset/`
 
 
 ```bash
-for fq in /groups/hbctraining/ngs-data-analysis-longcourse/rnaseq/full_dataset/*.fastq
+for fq in /groups/hbctraining/unix_workshop_other/full_dataset/*.fastq
  do 
    base=`basename $fq .fastq`
    bsub -q mcore -n 6 -W 1:30 -R "rusage[mem=4000]" -J $base.mov10_salmon -o %J.$base.out -e %J.$base.err \
-   salmon quant -i /groups/hbctraining/ngs-data-analysis-longcourse/rnaseq/salmon.ensembl37.idx/ \
+   salmon quant -i /groups/hbctraining/unix_workshop_other/salmon.ensembl37.idx/ \
    -p 6 -l SR -r $fq --useVBOpt --numBootstraps 30 -o $base.salmon
  done
 ```
 
 Save and close the script. This is now ready to run. **We are not going to run this script in class**, since it might take awhile.
 
-> *NOTE:* **PC users** will want to add the `--auxDir` parameter to the Salmon command and provide an alternate name for the directory. By default it will be named `aux` which interferes with the decompressing process when bringing files over locally to run `tximport/DESeq2` in R.  
+> *NOTE:* **Window users** will want to add the `--auxDir` parameter to the Salmon command and provide an alternate name for the directory. By default it will be named `aux` which interferes with the decompressing process when bringing files over locally to run `tximport/DESeq2` in R.  
 
 ## Next steps:  Performing DE analysis on Pseudocounts
 
