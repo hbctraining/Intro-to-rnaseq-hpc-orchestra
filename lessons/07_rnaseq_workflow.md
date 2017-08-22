@@ -1,6 +1,6 @@
 ---
 title: "RNA-Seq workflow"
-author: "Mary Piper, Meeta Mistry, Bob Freeman"
+author: "Radhika Khetani, Mary Piper, Meeta Mistry, Bob Freeman"
 date: "Wednesday, March 8, 2017"
 ---
 
@@ -9,7 +9,7 @@ Approximate time: 90 minutes
 ## Learning Objectives:
 
 * Describe and implement the RNA-Seq workflow to align reads to the reference genome 
-* Describe tools and methods within the RNAseq work-flow
+* Describe tools and methods within the RNAseq workflow
 * Assessing input and output filetypes
 
 ## Setting up to run the RNA-seq workflow
@@ -40,32 +40,22 @@ rnaseq/
 	└── logs/
 ```
 
-We previously described a general overview of the steps involved in RNA-Seq analysis, and in this session we will take our clean reads and align them to the reference genome.
+Below is a general overview of the steps involved in RNA-Seq analysis.
 
 <img src="../img/RNAseqWorkflow.png" width="400">
 
 
-So let's get started by loading up some of the modules for tools we need for this section: 
+So let's get started by loading up some of the modules for tools we need for this section to perform alignment and assess the alignment: 
 
 ```bash
- $ module load seq/STAR/2.5.2b seq/samtools/1.3 seq/htseq/0.6.1p1
+ $ module load seq/STAR/2.5.3a seq/samtools/1.3
 ```
-
 Create an output directory for our alignment files:
 
 ```bash
 $ mkdir results/STAR
 ```
-
-In the script, we will eventually loop over all of our files and have the cluster work on each one in serial, then in parallel. For now, we're going to work on just one to set up our workflow.  To start we will use the trimmed first replicate in the Mov10 overexpression group, `Mov10_oe_1.qualtrim25.minlen35.fq` 
-
-
-**NOTE: if you did not follow the last section, please execute the following command:** (this will copy over the required files into your home directory.)
-
-```bash
-$ cp -r /groups/hbctraining/unix_workshop_other/trimmed_fastq data/
-
-```
+In the automation script, we will eventually loop over all of our files and have the cluster work on the files in parallel. For now, we're going to work on just one to test and set up our workflow. To start we will use the first replicate in the Mov10 overexpression group, `Mov10_oe_1_subset.fq`.
 
 ## Read Alignment
 The alignment process consists of choosing an appropriate reference genome to map our reads against, and performing the read alignment using one of several splice-aware alignment tools such as [STAR](https://github.com/alexdobin/STAR) or [HISAT2](https://ccb.jhu.edu/software/hisat2/index.shtml) (HISAT2 is a successor to both HISAT and TopHat2). The choice of aligner is a personal preference and also dependent on the computational resources that are available to you.
@@ -74,7 +64,7 @@ For this workshop we will be using STAR (Spliced Transcripts Alignment to a Refe
 
 ### STAR Alignment Strategy
 
-STAR is shown to have **high accuracy** and outperforms other aligners by more than a **factor of 50 in mapping speed(but also requires quite a bit of memory)**. The algorithm achieves this highly efficient mapping by performing a two-step process:
+STAR is shown to have **high accuracy** and outperforms other aligners by more than a **factor of 50 in mapping speed (but also requires quite a bit of memory)**. The algorithm achieves this highly efficient mapping by performing a two-step process:
 
 1. Seed searching
 2. Clustering, stitching, and scoring
@@ -274,22 +264,21 @@ Now let's look at the count matrix:
 ``` bash
 $ less results/counts/Mov10_featurecounts.txt
 ```
-> There is information about the genomic coordinates and the length of the gene, we don't need this for the next step and you can use the `cut` command to select only those columns that you are interested in.
-> 	
+There is information about the genomic coordinates and the length of the gene, we don't need this for the next step and you can use the `cut` command as shown in the note below to select only those columns that you are interested in. A cleaned up version of this count matrix with "raw" counts will be used to perform differential gene expression analysis.
+	
 > ``` bash
 > $ cut -f1,7,8,9,10,11,12 results/counts/Mov10_featurecounts.txt > results/counts/Mov10_featurecounts.Rmatrix.txt
 > ```
-> This should also be cleaned up further by changing the column names (headers).
-
-A cleaned up version of this count matrix with "raw" counts will be used to perform differential gene expression analysis.
+> This should also be cleaned up further by changing the column names (headers) to simpler, smaller sampleIDs.
 
 ***
-#### Note on counting PE data
 
-For paired-end (PE) data, the bam file contains information about whether both read1 and read2 mapped and if they were at roughly the correct distance from each other, that is to say if they were "properly" paired. For most counting tools, only properly paired reads are considered by default, and each read pair is counted only once as a single "fragment". 
-
-For counting PE fragments associated with genes, the input bam files need to be sorted by read name (i.e. alignment information about both read pairs in adjoining rows). The alignment tool might sort them for you, but watch out for how the sorting was done. If they are sorted by coordinates (like with STAR), you will need to use `samtools sort` to re-sort them by read name before using as input in featureCounts. If you do not sort you BAM file by read name before using as input, featureCounts assumes that almost all the reads are not properly paired.
-
+> #### Note on counting PE data
+> 
+> For paired-end (PE) data, the bam file contains information about whether both read1 and read2 mapped and if they were at roughly the correct distance from each other, that is to say if they were "properly" paired. For most counting tools, only properly paired reads are considered by default, and each read pair is counted only once as a single "fragment". 
+> 
+> For counting PE fragments associated with genes, the input bam files need to be sorted by read name (i.e. alignment information about both read pairs in adjoining rows). The alignment tool might sort them for you, but watch out for how the sorting was done. If they are sorted by coordinates (like with STAR), you will need to use `samtools sort` to re-sort them by read name before using as input in featureCounts. If you do not sort you BAM file by read name before using as input, featureCounts assumes that almost all the reads are not properly paired.
+***
 ### Visual assessment of the alignment
 
 Index the BAM file for visualization with IGV:
