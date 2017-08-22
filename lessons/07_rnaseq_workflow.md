@@ -1,7 +1,7 @@
 ---
 title: "RNA-Seq workflow"
-author: "Radhika Khetani, Mary Piper, Meeta Mistry, Bob Freeman"
-date: "Wednesday, March 8, 2017"
+author: "Mary Piper, Meeta Mistry, Radhika Khetani,  Bob Freeman"
+date: "Tuesday, August 22, 2017"
 ---
 
 Approximate time: 90 minutes
