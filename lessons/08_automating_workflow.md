@@ -51,7 +51,7 @@ The variables $1, $2, $3,...$9 and so on are **positional parameters** in the co
 
 > [This is an example of a simple script that used the concept of positional parameters and the associated variables](http://steve-parker.org/sh/eg/var3.sh.txt). You should try this script out after the class to get a better handle on positional parameters for shell scripting.
 
-Let's use this new concept we have just learned in the script we are writing. We want the first positional parameter ($1) to be the name of our fastq file. We could just use the variable `$1` through out the script to refer to the fastq file, but this variable name is not intuitive, so we want to create a new variable called `fq` and copy the contents of `$1` into it.
+Let's use this new concept we have just learned in the script we are writing. We want the first positional parameter ($1) to be the name of our fastq file. We could just use the variable `$1` throughout the script to refer to the fastq file, but this variable name is not intuitive, so we want to create a new variable called `fq` and copy the contents of `$1` into it.
 
 ```bash
 #!/bin/bash/
@@ -144,7 +144,7 @@ echo "Processing file $fq"
 
 > You can also use `set -x`:
 >
-> `set -x` is a debugging tool that will make bash display the command before executing it. In case of an issue with the commands in the shell script, this type of debugging lets you quickly pinpoint the step that is throwing an error. Often, tools will display the error that caused the program to stop running, so keep this in mind for times when you are running into issues where this is not availble.
+> `set -x` is a debugging tool that will make bash display the command before executing it. In case of an issue with the commands in the shell script, this type of debugging lets you quickly pinpoint the step that is throwing an error. Often, tools will display the error that caused the program to stop running, so keep this in mind for times when you are running into issues where this is not available.
 > You can turn this functionality off by saying `set +x`
 
 ### Running the tools
@@ -203,7 +203,7 @@ The above script will run in an interactive session **one file at a time**. But 
 To run the above script "in serial" for all of the files on a worker node via the job scheduler, we can create a separate submission script that will need 2 components:
 
 1. **LSF directives** at the **beginning** of the script. This is so that the scheduler knows what resources we need in order to run our job on the compute node(s).
-2. a for loop that iterates through and runs the above script for all the fastq files.
+2. a `for` loop that iterates through and runs the above script for all the fastq files.
 
 Below is what this second script would look like **\[DO NOT RUN THIS\]**:
 
@@ -226,9 +226,9 @@ do
 done
 ```
 
-**But we don't want to run our the analysis on our 6 samples one after the other!** We want to run them "in parallel" as 6 separate jobs. 
+**But we don't want to run the analysis on these 6 samples one after the other!** We want to run them "in parallel" as 6 separate jobs. 
 
-**Note:** If you did run the above script, or something like it, you might want to give it the `.lsf` extension so it is obvious that it is meant to submit jobs to the LSF scheduler. 
+**Note:** If you create and run the above script, or something similar to it, i.e. with LSF directives at the top, you should give the script name `.lsf` as the extension. This will make it obvious that it is meant to submit jobs to the LSF scheduler. 
 
 ***
 **Exercise**
