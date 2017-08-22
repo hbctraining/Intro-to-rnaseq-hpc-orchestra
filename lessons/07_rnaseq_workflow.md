@@ -26,7 +26,7 @@ Change directories into the `unix_workshop` directory and copy the `reference_da
 $ cd ~/unix_workshop/rnaseq
 ```
 
-You should have a directory tree setup similar to that shown below. it is best practice to have all files you intend on using for your workflow present within the same directory. In our case, we have our original FASTQ files and post-trimming data generated in the previous section. We also have all reference data files that will be used in downstream analyses.
+You should have a directory tree setup similar to that shown below. It is best practice to have all files you intend on using for your workflow present within the same directory.
 
 ```
 rnaseq/
