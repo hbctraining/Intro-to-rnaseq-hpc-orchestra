@@ -69,7 +69,7 @@ rnaseq
 - `results`: for output from the different tools you implement in your workflow. Create sub-folders specific to each tool/step of the workflow within this folder. 
 - `scripts`: for scripts that you write and use to run analyses/workflow.
 
-Create a directory for the project by changing into `rnaseq/` and then using `mkdir` to create the subdirectories.
+Create subdirectories for the project by changing into `rnaseq/` and then using `mkdir`.
 
 ```bash
 $ cd ~/unix_workshop/rnaseq
