@@ -176,7 +176,9 @@ Take your gene list and paste it in the `Query' box.
 
 In addition, we need to be able to use the resulting non-normalized values which contain decimal places as input to create the DESeq object. Finally, to use DESeq2 we need to be able to tell which transcript is associated with which gene, since DESeq2 performs gene-level differential expression.
 
-### Setting up to run DESeq2 on pseudocount data:
+### Differential expression analysis using pseudocounts 
+
+In the script above we rused count data generated from the standard RNA-seq workflow. as input
 
 You can download the directory with the quant.sf files for the 8 full datasets using the link below. Once you have them downloaded continue to follow the set of instructions:
 
