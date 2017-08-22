@@ -246,7 +246,7 @@ The above scripts will both generate count files for individual samples. Hence, 
 
 <img src="../img/count_matrix.png" width=400>
 
-Alternatively, you could remove featureCounts from the script, and instead run it on all the BAM files after the jobs finish have generating them.
+Alternatively, you could remove featureCounts from the script, and instead run it on all the BAM files after the jobs finish generating them.
 
 ---
 *This lesson has been developed by members of the teaching team at the [Harvard Chan Bioinformatics Core (HBC)](http://bioinformatics.sph.harvard.edu/). These are open access materials distributed under the terms of the [Creative Commons Attribution license](https://creativecommons.org/licenses/by/4.0/) (CC BY 4.0), which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited.*
