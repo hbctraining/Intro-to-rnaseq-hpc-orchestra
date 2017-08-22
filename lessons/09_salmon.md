@@ -22,17 +22,17 @@ In the standard RNA-seq pipeline that we have presented so far, we have taken ou
 
 The improvement in accuracy for lightweight alignment tools in comparison with the standard alignment/counting methods primarily relate to the ability of the lightweight alignment tools to quantify multimapping reads. This has been shown by Robert et. al by comparing the accuracy of 12 different alignment/quantification methods using simulated data to estimate the gene expression of 1000 perfect RNA-Seq read pairs from each of of the genes [[3](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0734-x)]. As shown in the figures below taken from the paper, the standard method of using alignment and counting methods such as STAR/htseq or Tophat2/htseq result in underestimates of many genes - particularly those genes comprised of multimapping reads [[3](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0734-x)]. 
 
-<img src="../img/pseudo_count_comparison-star.png" width="500">
+<img src="../img/pseudo_count_comparison-star.png" width="750">
 
 _**NOTE:** Tails to the left indicate underestimates of gene expression, while tails to the right indicate overestimates of gene expression._
 
 While the STAR/htseq standard method of alignment and counting is a bit conservative and can result in false negatives, Cufflinks tends to overestimate gene expression and results in many false positives, which is why Cufflinks is generally not recommended for gene expression quantification.
 
-<img src="../img/pseudo_count_comparison-cufflinks.png" width="500">
+<img src="../img/pseudo_count_comparison-cufflinks.png" width="750">
 
 Finally, the most accurate quantification of gene expression was achieved using the pseudo-alignement tool Sailfish (if used without bias correction).
 
-<img src="../img/pseudo_count_comparison-sailfish.png" width="500">
+<img src="../img/pseudo_count_comparison-sailfish.png" width="750">
 
 Pseudo-alignment tools such as Sailfish, Kallisto, and Salmon have generally been found to yield the most accurate estimations of gene expression. Salmon is considered to have some improvements relative to Sailfish, and it is considered to give very similar results to Kallisto. 
 
