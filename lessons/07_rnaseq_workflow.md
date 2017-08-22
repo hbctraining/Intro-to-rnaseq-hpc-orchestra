@@ -12,9 +12,7 @@ Approximate time: 90 minutes
 * Describe tools and methods within the RNAseq work-flow
 * Assessing input and output filetypes
 
-## Running a Workflow
-
-### Setting up
+## Setting up to run the RNA-seq workflow
 
 To get started with this lesson, we will start an interactive session and ask for 6 cores, by adding `-n 6` to the bsub command:
 
@@ -112,7 +110,7 @@ Then the seeds are stitched together based on the best alignment for the read (s
 
 ![STAR_step5](../img/alignment_STAR_step5.png)
 
-## Running STAR
+### Running STAR
 
 Aligning reads using STAR is a two step process:   
 
@@ -125,7 +123,7 @@ Aligning reads using STAR is a two step process:
 $ ls -l /groups/shared_databases/igenome/
 ```
 
-### Creating a genome index
+#### Creating a genome index
 
 For this workshop we are using reads that originate from a small subsection of chromosome 1 (~300,000 reads) and so we are using only chr1 as the reference genome. Therefore, we cannot use any of the ready-made indices available in the `/groups/shared_databases/` folder.
 
@@ -168,22 +166,26 @@ Now let's put it all together! The full STAR alignment command is provided below
 ```bash
 $ STAR --runThreadN 6 \
 --genomeDir /groups/hbctraining/unix_workshop_other/reference_STAR \
---readFilesIn data/trimmed_fastq/Mov10_oe_1.qualtrim25.minlen35.fq \
+--readFilesIn raw_data/Mov10_oe_1_subset.fq \
 --outFileNamePrefix results/STAR/Mov10_oe_1_ \
 --outSAMtype BAM SortedByCoordinate \
 --outSAMunmapped Within \
 --outSAMattributes NH HI NM MD AS
 ```
+***
 
-#### Exercise
+**Exercise**
+
 How many files do you see in your output directory? Using the `less` command take a look at `Mov10_oe_1_Log.final.out` and answer the following questions:  
 
 1. How many reads are uniquely mapped?
 2. How many reads map to more than 10 locations on the genome?
 3. How many reads are unmapped due to read length?
 
+***
 
-### SAM/BAM
+### Alignment Outputs (SAM/BAM)
+
 The output we requested from STAR is a BAM file, and by default returns a file in SAM format. **BAM is a binary version of the SAM file, also known as Sequence Alignment Map format.** The SAM file is a tab-delimited text file that contains information for each individual read and its alignment to the genome. The file begins with an optional header (which starts with '@'), followed by an alignment section in which each line corresponds to alignment information for a single read. **Each alignment line has 11 mandatory fields** for essential mapping information and a variable number of fields for aligner specific information.
 
 These fields are described briefly below, but for more detailed information the paper by [Heng Li et al](http://bioinformatics.oxfordjournals.org/content/25/16/2078.full) is a good start.
@@ -196,12 +198,100 @@ Let's take a quick look at our alignment. To do so we first convert our BAM file
 
 ```bash
 $ samtools view -h results/STAR/Mov10_oe_1_Aligned.sortedByCoord.out.bam | less
-
 ```
- 
 Scroll through the SAM file and see how the fields correspond to what we expected.
 
-### Assess the alignment (visualization)
+### Counting reads
+Once we have our reads aligned to the genome, the next step is to count how many reads have been mapped to each gene. The input files required for counting include the BAM file and an associated gene annotation file in GTF format. Today, we will be using the [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) tool to get the *gene* counts. We picked this tool because it is accurate, fast and is relatively easy to use. 
+
+`featureCounts` works by **taking the alignment coordinates for each read and cross-referencing that to the coordinates for *features* described in the GTF**. Most commonly a feature is considered to be a gene, which is the union of all exons (which is also a feature type) that make up that gene. *Please note that this tool is best used for counting reads associated with **genes**, and not for splice isoforms or transcripts.* 
+
+`featureCounts` only includes and counts those reads that map to a single location (uniquely mapping) and follows the scheme in the figure below for assigning reads to a gene/exon. 
+
+<img src="../img/union.png" width="300">
+
+`featureCounts` can also take into account whether your data are **stranded** or not. If strandedness is specified, then in addition to considering the genomic coordinates it will also take the strand into account for counting. If your data are stranded always specify it.
+
+#### Setting up to run featureCounts
+
+Let's start by creating a directory for the output:
+
+```bash
+$ mkdir results/counts
+```
+`featureCounts` is not available as a module on Orchestra, but we have already added the path for it (`/opt/bcbio/centos/bin`) to our `$PATH` variable last time. 
+
+``` bash
+$ which featureCounts  # should return /opt/bcbio/centos/bin 
+```
+
+> ** If running the above command does not return `/opt/bcbio/centos/bin`, run `export PATH=/opt/bcbio/centos/bin:$PATH` and try the `which` command again.**
+
+How do we use this tool, what is the command and what options/parameters are available to us?
+
+``` bash
+$ featureCounts
+```
+
+So, it looks like the usage is `featureCounts [options] -a <annotation_file> -o <output_file> input_file1 [input_file2] ... `, where `-a`, `-o` and input files are required. 
+
+It can also take multiple bam files as input. Since we have only run STAR on 1 FASTQ file, let's copy over the other bam files that we would need so we can generate the full count matrix.
+
+```bash
+cp /groups/hbctraining/unix_workshop_other/bam_STAR/*bam ~/unix_workshop/rnaseq/results/STAR/
+```
+
+We are going to use the following options:
+
+`-T 4 # specify 4 cores`
+
+`-s 2 # these data are "reverse"ly stranded`
+
+and the following are the values for the required parameters:
+
+`-a ~/unix_workshop/rnaseq/reference_data/chr1-hg19_genes.gtf # required option for specifying path to GTF`
+
+`-o ~/unix_workshop/rnaseq/results/counts/Mov10_featurecounts.txt # required option for specifying path to, and name of the text output (count matrix)`
+
+`~/unix_workshop/rnaseq/results/STAR/*bam # the list of all the bam files we want to collect count information for`
+
+#### Running featureCounts
+
+``` bash
+$ featureCounts -T 4 -s 2 \ 
+  -a ~/unix_workshop/rnaseq/reference_data/chr1-hg19_genes.gtf \
+  -o ~/unix_workshop/rnaseq/results/counts/Mov10_featurecounts.txt \
+  ~/unix_workshop/rnaseq/results/STAR/*bam
+```
+#### featureCounts output
+
+The output of this tool is 2 files, *a count matrix* and *a summary file* that tabulates how many the reads were "assigned" or counted and the reason they remained "unassigned". Let's take a look at the summary file:
+	
+``` bash
+$ less results/counts/Mov10_featurecounts.txt.summary
+```
+Now let's look at the count matrix:
+	
+``` bash
+$ less results/counts/Mov10_featurecounts.txt
+```
+> There is information about the genomic coordinates and the length of the gene, we don't need this for the next step and you can use the `cut` command to select only those columns that you are interested in.
+> 	
+> ``` bash
+> $ cut -f1,7,8,9,10,11,12 results/counts/Mov10_featurecounts.txt > results/counts/Mov10_featurecounts.Rmatrix.txt
+> ```
+> This should also be cleaned up further by changing the column names (headers).
+
+A cleaned up version of this count matrix with "raw" counts will be used to perform differential gene expression analysis.
+
+***
+#### Note on counting PE data
+
+For paired-end (PE) data, the bam file contains information about whether both read1 and read2 mapped and if they were at roughly the correct distance from each other, that is to say if they were "properly" paired. For most counting tools, only properly paired reads are considered by default, and each read pair is counted only once as a single "fragment". 
+
+For counting PE fragments associated with genes, the input bam files need to be sorted by read name (i.e. alignment information about both read pairs in adjoining rows). The alignment tool might sort them for you, but watch out for how the sorting was done. If they are sorted by coordinates (like with STAR), you will need to use `samtools sort` to re-sort them by read name before using as input in featureCounts. If you do not sort you BAM file by read name before using as input, featureCounts assumes that almost all the reads are not properly paired.
+
+### Visual assessment of the alignment
 
 Index the BAM file for visualization with IGV:
 
@@ -211,9 +301,9 @@ $ samtools index results/STAR/Mov10_oe_1_Aligned.sortedByCoord.out.bam
 
 Use _**FileZilla**_ to copy the following files to your local machine:
  
-`results/STAR/Mov10_oe_1_Aligned.sortedByCoord.out.bam`
+`~/unix_workshop/results/STAR/Mov10_oe_1_Aligned.sortedByCoord.out.bam`
 
-`results/STAR/Mov10_oe_1_Aligned.sortedByCoord.out.bam.bai` 
+`~/unix_workshop/results/STAR/Mov10_oe_1_Aligned.sortedByCoord.out.bam.bai` 
 
 > **NOTE: You can also transfer files to your laptop using the command line**
 >
@@ -221,56 +311,26 @@ Use _**FileZilla**_ to copy the following files to your local machine:
 >
 > First, identify the location of the _origin file_ you intend to copy, followed by the _destination_ of that file. Since the original file is located on Orchestra, this requires you to provide remote host and login information.
 
-```bash
-$ scp user_name@transfer.orchestra.med.harvard.edu:/home/user_name/unix_workshop/rnaseq_project/results/Mov10_oe_1_Aligned.sortedByCoord.out.bam* /path/to/directory_on_laptop
-```
+> ```bash
+> $ scp user_name@transfer.orchestra.med.harvard.edu:/home/user_name/unix_workshop/rnaseq_project/results/Mov10_oe_1_Aligned.sortedByCoord.out.bam* /path/to/directory_on_laptop
+> ```
 
 **Visualize**
 
-* Start [IGV](https://www.broadinstitute.org/software/igv/download) _You should have this previously installed on your laptop_
-* Load the Human genome (hg19) into IGV using the dropdown menu at the top left of your screen. _Note: there is also an option to "Load Genomes from File..." under the "Genomes" pull-down menu - this is useful when working with non-model organisms_
-* Load the .bam file using the **"Load from File..."** option under the **"File"** pull-down menu. *IGV requires the .bai file to be in the same location as the .bam file that is loaded into IGV, but there is no direct use for that file.*
+* Start [IGV](https://www.broadinstitute.org/software/igv/download), *you should have this previously installed on your laptop*.
+* Load the Human genome (hg19) into IGV using the dropdown menu at the top left of your screen. 
+**Note**: there is also an option to "Load Genomes from File..." under the "Genomes" pull-down menu - this is useful when working with non-model organisms
+* Load the .bam file using the **"Load from File..."** option under the **"File"** pull-down menu. *IGV requires the `.bai` file to be in the same location as corresponding `.bam` file that you want to load into IGV, but there is no other direct use for this index file.*
 
 ![IGV screenshot](../img/igv_screenshot.png)
 
-#### Exercise
-Now that we have done this for one sample, let's try using the same commands to perform alignment on one of the control samples. Using `Irrel_kd_1_qualtrim25.minlen35.fq` walk through the alignment commands above. Copy over the resulting BAM and index file to your laptop and upload into IGV for visualization. 
+***
+**Exercise**
+
+Now that we have done this for one sample, let's try using the same commands to perform alignment on one of the control samples. Create an index for the `Irrel_kd_1_Aligned.sortedByCoord.out.bam` file and them to your laptop and load into IGV for visualization. 
 
 1. How does the MOV10 gene look in the control sample in comparison to the overexpression sample?
 2. Take a look at a few other genes by typing into the search bar. For example, PPM1J and PTPN22. How do these genes compare? 
-
-### Counting reads
-Once we have our reads aligned to the genome, the next step is to count how many reads have been mapped to each gene. Counting is done with a tool called [`htseq-count`](http://www-huber.embl.de/users/anders/HTSeq/doc/count.html). The input files required for counting include the BAM file and an associated gene annotation file in GTF format. `htseq-count` works by **taking the alignment coordinates for each read and cross-referencing that to the coordinates for features described in the GTF**. Most commonly a feature is considered to be a gene, which is the union of all exons (which is a feature type) that map to that gene. There is no minimum overlap to determine whether or not a read is counted for a particular gene, rather it is the mode that the user chooses. 
-
-There are three modes available and are listed below in order of stringency, with most conservative at the top:
-
-1. intersection-strict
-2. union
-3. intersection non-empty
-
-
-We will be using the 'union' mode as it is default and most commonly used. To find out more on the different modes and how they affect your output, take a look at the [manual](http://www-huber.embl.de/users/anders/HTSeq/doc/count.html)
-
-Let's start by creating a directory for the output:
-
-```bash
-$ mkdir results/counts
-```
-
-In it's most basic form the `htseq` command requires only the BAM file and the GTF file. We will add in a few additional parameters including `--format` to indicate BAM file, and `--stranded reverse` to specify that we have a stranded library created via the dUTP method. By default htseq-count will _ignore any reads that map to multiple locations_ on the genome. This results in undercounting but also helps reduce false positives. While multi-mappers are a feature that cannot be modified, there is a parameter that allows the user to filter reads by specifying a minimum alignment quality. 
-
-You will notice at the end of the command we have added a redirection symbol. Since htseq-count outputs results to screen, we need to re-direct it to file.
-
-```bash
-$ htseq-count --stranded reverse --format bam results/STAR/Mov10_oe_1_Aligned.sortedByCoord.out.bam data/reference_data/chr1-hg19_genes.gtf  >  results/counts/Mov10_oe_1.counts
-```
-
-***
-#### Exercise
-Take a look at the end of the file using the `tail` command. You should see a summary of how the reads were classified. 
-
-1. How many reads were assigned as no_feature? Why would they be classified this way?
-2. How many reads were found to map to multiple locations?
 
 ***
 
