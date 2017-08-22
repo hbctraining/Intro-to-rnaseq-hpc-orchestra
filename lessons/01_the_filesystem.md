@@ -15,7 +15,7 @@ date: "August 7, 2017"
 
 ## Setting up
 
-We will spend most of our time learning about the basics of the shell by manipulating some experimental data.
+We will spend most of our time learning about the basics of the shell by exploring experimental data.
 
 Since we are going to be working with this data on our remote server, **Orchestra**, we first need to log onto the server. After we're logged on, we will each make our own copy of the example data folder.
 
