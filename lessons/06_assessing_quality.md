@@ -167,7 +167,7 @@ module load seq/fastqc/0.11.3
 fastqc -t 6 *.fq
 
 ## Moving files to our results directory
-mv *fastqc* ../results/fastqc_untrimmed_reads/
+mv *fastqc* ../results/fastqc/
 ```
 
 Save and quit the script. Now, let's submit the job to the LSF:
@@ -182,11 +182,9 @@ You can check on the status of your job with:
 $ bjobs
 ```
 
-
 ```bash
 $ ls -lh ../results/fastqc/
 ```
-
 There should also be standard error (`.err`) and standard out (`.out`) files from the job listed in `~/unix_workshop/rnaseq/scripts`. You can move these over to your `logs` directory and give them more intuitive names:
 
 ```bash
