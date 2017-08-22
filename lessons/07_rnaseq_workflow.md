@@ -8,7 +8,7 @@ Approximate time: 90 minutes
 
 ## Learning Objectives:
 
-* Describe and implement the RNA-Seq workflow to align reads to the reference genome 
+* Describe and implement the RNA-seq workflow to align reads to the reference genome 
 * Describe tools and methods within the RNA-seq workflow
 * Assessing input and output filetypes
 
@@ -40,7 +40,7 @@ rnaseq/
 	└── logs/
 ```
 
-Below is a general overview of the steps involved in RNA-Seq analysis.
+Below is a general overview of the steps involved in RNA-seq analysis.
 
 <img src="../img/RNAseqWorkflow.png" width="400">
 
