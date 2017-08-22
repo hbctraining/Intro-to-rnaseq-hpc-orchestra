@@ -10,10 +10,8 @@ duration: 35
 
 - Recognize the need for data management.
 - Plan a good genomics experiment and getting started with project organization.
-- Have a general idea of the experiment and its objectives.
-- Understand how and why we chose this dataset.
-
-
+- Explain the RNA-seq experiment and its objectives.
+- Define "metadata" and describe it for the example experiment.
 
 ## Data Management
 
@@ -21,14 +19,17 @@ Project organization is one of the most important parts of a sequencing project,
 
 Importantly, the methods and approaches needed for bioinformatics are the same required in a wet lab environment. **Planning, documentation, and organization** are essential to good, reproducible science. 
 
+Today we will breifly talk about each of these concepts. If you are interested in Research Data Management (RDM), the HMS Data Management Working Group has [a website](https://datamanagement.hms.harvard.edu/) with more information, resources and contacts.
+
 ### Planning
 
 You should approach your sequencing project in a very similar way to how you do a biological experiment, and ideally, begins with **experimental design**. We're going to assume that you've already designed a beautiful sequencing experiment to address your biological question, collected appropriate samples, and that you have enough statistical power.
 
+During this stage it is important to keep track of how the experiment was performed and clearly tracking the source of starting materials and kits used. It is also best practice to include information about any small variations within the experiment or variation relative to standard experiments. 
 
 ### Organization
 
-Every computational analysis you do is going to spawn many files, and inevitability, you'll want to run some of those analyses again. Genomics projects can quickly accumulate hundreds of files across tens of folders. Before you start any analysis it is best to first get organized and **create a planned storage space for your workflow**.
+Every computational analysis you do is going to spawn many files, and inevitability you'll want to run some of those analyses again. For each experiment you work on and analyze data for, it is considered best practice to get organized by creating a planned storage space (directory structure).
 
 We will start by creating a directory that we can use for the rest of the RNA-seq session.
 
@@ -47,7 +48,7 @@ Now make a directory for the RNA-seq analysis within the `unix_workshop/` folder
 $ mkdir -p ~/unix_workshop/rnaseq
 ```
 
-Next, set up the following structure within your project directory to keep files organized.
+Next, we will set up the following structure within your project directory to keep files organized. 
 
 ```bash
 rnaseq
@@ -59,14 +60,14 @@ rnaseq
   └── scripts
 ```
 
-*This is a generic structure and can be tweaked based on personal preference.*
+*This is a generic structure and can be tweaked based on personal preference and analysis workflow.*
 
-- `logs`: It is important to keep track of the commands run and the specific parameters used, but also to have a record of any standard output that is generated while running the command. 
-- `meta`: This folder contains any information that describes the samples you are using, which we often refer to as metadata. 
-- `raw_data`: Store any **unmodified** raw data obtained prior to computational analysis here. We strongly recommend placing the original source NGS run data here, i.e. FASTQ files.
-- `reference_data`: Store any necessary genomic annotation reference (e.g. FASTA, GTF) files here.
-- `results`: This folder will contain the output from the different tools you implement in your workflow. To stay organized, you should create sub-folders specific to each tool/step of the workflow. 
-- `scripts`: This folder will contain the scripts that you use to run analyses at different points in the workflow.
+- `logs`: to keep track of the commands run and the specific parameters used, but also to have a record of any standard output that is generated while running the command. 
+- `meta`: for any information that describes the samples you are using, which we refer to as [metadata](https://datamanagement.hms.harvard.edu/metadata-overview). 
+- `raw_data`: for any **unmodified** (raw) data obtained prior to computational analysis here, e.g. FASTQ files from the sequencing center. We strongly recommend leaving this directory unmodified through the analysis.
+- `reference_data`: for known information related to the reference genome that will be used in the analysis, e.g. genome sequence (FASTA), gene annotation file (GTF) associated with the genome.
+- `results`: for output from the different tools you implement in your workflow. Create sub-folders specific to each tool/step of the workflow within this folder. 
+- `scripts`: for scripts that you write and use to run analyses/workflow.
 
 Create a directory for the project by changing into `rnaseq/` and then using `mkdir` to create the subdirectories.
 
@@ -74,7 +75,6 @@ Create a directory for the project by changing into `rnaseq/` and then using `mk
 $ cd ~/unix_workshop/rnaseq
 $ mkdir -p logs meta raw_data reference_data results scripts
 ``` 
-
 Verify that the subdirectories now exist.
 
 ```bash
@@ -89,7 +89,7 @@ The FASTQ files are located inside `~/unix_workshop/raw_fastq/`, and we need to 
 $ cp ~/unix_workshop/raw_fastq/*.fq raw_data/
 ```
 
-Later in the workflow when we perform alignment, we will require genome reference files (.fa, .gtf) for alignment and read counting. These files are also in the `unix_workshop/` directory inside `reference_data/`, we can copy over the whole folder in this case. You can use `.` as a placeholder for the current working directory as the destination.
+Later in the workflow when we perform alignment, we will require genome reference files (.fa, .gtf) for alignment and read counting. These files are also in the `unix_workshop/` directory inside `reference_data/`, we can copy over the whole folder in this case. You can use `.` as a shortcut for the current working directory as the destination.
 
 ```bash
 $ cp -r ~/unix_workshop/reference_data/ .
@@ -117,20 +117,22 @@ rnaseq
 
 ### Documentation
 
-For all of those steps, collecting specimens, extracting DNA, prepping your samples, you've likely kept a lab notebook that details how and why you did each step, but **documentation doesn't stop at the sequencer**! 
+**Documentation doesn't stop at the sequencer!** Continue to maintain a lab notebook equivalent during the analysis to make your analysis reproducible and efficient.
 
 #### Log files
 
 In your lab notebook, you likely keep track of the different reagents and kits used for a specific protocol. Similarly, recording information about the tools and parameters is important for documenting your computational experiments. 
 
-- Keep track of software versions used.
-- Record information on parameters used and summary statistics at every step (e.g., how many adapters were removed, how many reads did not align).
-- Save log files and console output.
+- Keep track of software versions
+- Record information on parameters used and summary statistics at every step (e.g., how many adapters were removed, how many reads did not align)
+- Save log files and console output
     - Different tools have different ways of reporting log messages and you might have to experiment a bit to figure out what output to capture. You can redirect standard output with the `>` symbol which is equivalent to `1> (standard out)`; other tools might require you to use `2>` to re-direct the `standard error` instead.
  
-#### README file
+#### README files
 
-Keeping notes on what happened in what order, and what was done, is essential for reproducible research. If you don’t keep good notes, then you will forget what you did pretty quickly, and if you don’t know what you did, no one else has a chance. After setting up the filesystem and running a workflow it is useful to have a **README file within your project** directory. This file will usually contain a quick one line summary about the project and any other lines that follow will describe the files/directories found within it. An example README is shown below. Within each sub-directory you can also include README files to describe the analysis and the files that were generated.
+After setting up the directory structure and when the analysis is running it is useful to have a **[README file](https://datamanagement.hms.harvard.edu/readme-files) within your project directory**. This file will usually contain a quick one line summary about the project and any other lines that follow will describe the files/directories found within it. An example README is shown below. Within each sub-directory you can also include README files to describe the analysis and the files that were generated.
+
+Keeping notes on what happened in what order, and what was done, is essential for reproducible research. If you don’t keep good notes, then you will forget what you did pretty quickly, and if you don’t know what you did, no one else has a chance. 
 
 ```
 ## README ##
@@ -146,6 +148,9 @@ reference_data:
 results:
 scripts:
 ```
+### File naming conventions
+
+Another aspect of staying organized is making sure that all the filenames in an analysis are as consistent as possible, and are not things like `alignment1.bam`, but more like `20170823_kd_rep1_STAR-1.4.bam`. [This link](https://datamanagement.hms.harvard.edu/file-naming-conventions) and [this slideshow](http://www2.stat.duke.edu/~rcs46/lectures_2015/01-markdown-git/slides/naming-slides/naming-slides.pdf) have some good guidelines for file naming dos and don'ts.
 
 *** 
 ### Homework exercise
@@ -157,11 +162,11 @@ scripts:
 
 The dataset we are using is part of a larger study described in [Kenny PJ et al., *Cell Rep* 2014](http://www.ncbi.nlm.nih.gov/pubmed/25464849). The authors are investigating interactions between various genes involved in Fragile X syndrome, a disease of aberrant protein production, which results in cognitive impairment and autistic-like features. **The authors sought to show that RNA helicase MOV10 regulates the translation of RNAs involved in Fragile X syndrome.**
 
-From this study we are using the [RNA-seq](http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE50499) data which is publicly available in the [SRA][]. In addition to the raw sequence data we also need to collect **information about the data**, also known as **metadata**.  We are usually quick to want to begin analysis of the sequence data (FASTQ files), but how useful is it if we know nothing about the samples that this sequence data originated from? Some relevant metadata for our dataset is provided below:
+From this study we are using the [RNA-seq](http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE50499) data which is publicly available in the [Sequence Read Archive (SRA)][https://www.ncbi.nlm.nih.gov/sra/?term=SRP029367]. In addition to the raw sequence data we also need to collect **information about the data**, also known as **metadata**.  We are usually quick to want to begin analysis of the sequence data (FASTQ files), but how useful is it if we know nothing about the samples that this sequence data originated from? Some relevant metadata for our dataset is provided below:
 
-* The RNA was extracted from **HEK293F cells** that were transfected with a MOV10 transgene or an irrelevant siRNA.  
-* The libraries for this dataset are **stranded** and were generated using the **dUTP method**. 
-* Sequencing was carried out on the **Illumina HiSeq-2500 for 100bp single end** reads. 
+* The RNA was extracted from **HEK293F cells** that were transfected with a **MOV10 transgene**, **MOV10 siRNA**, or an **irrelevant siRNA**.  (*For this workshop we won't be using the MOV10 knock down samples.*)
+* The libraries for this dataset are **stranded** and were generated using the standard Tru-seq prep kit (using the dUTP method). 
+* Sequencing was carried out on the **Illumina HiSeq-2500** and **100bp single end** reads were generated. 
 * The full dataset was sequenced to **~40 million reads** per sample, but for this workshop we will be looking at a small subset on chr1 (~300,000 reads/sample).
 * For each group we have three replicates as described in the figure below.
 
@@ -182,13 +187,13 @@ For any bioinformatics experiment you will have to go through a series of steps 
 
 ## Best practices for NGS Analysis 
 
-Ok so now you are all set up and have begun your analysis. You have set up your space in a way such that someone unfamiliar with your project should be able to look at your files/folders and understand what you did and why. Before we move on, here are a few additional pointers:
+Ok so now you are all set up and have begun your analysis. You have followed best practices to set up your analysis directory structure in a way such that someone unfamiliar with your project should be able to look at it and understand what you did and why. But there is more...:
 
 1. **Make sure to use the appropriate software.** Do your research and find out what is best for the data you are working with. Don't just work with tools that you are able to easily install. Also, make sure you are using the most up-to-date versions! If you run out-of-date software, you are probably introducing errors into your workflow; and you may be missing out on more accurate methods.
 
 2. **Keep up with the literature.** Bioinformatics is a fast-moving field and it's always good to stay in the know about recent developments. This will help you determine what is appropriate and what is not.  
 
-3. **Do not re-invent the wheel.** If you run into problems, more often than not someone has already encountered that same problem. A solution is either already available or someone is working on it -- so find it!
+3. **Do not re-invent the wheel.** If you run into problems, more often than not someone has already encountered that same problem. A solution is either already available or someone is working on it -- so find it! Ask colleagues or search/ask online forums such as [BioStars](https://www.biostars.org/).
 
 4. **Testing is essential.** If you are using a tool for the first time, test it out on a single sample or a subset of the data before running your entire dataset through. This will allow you to debug quicker and give you a chance to also get a feel for the tool and the different parameters.
 
