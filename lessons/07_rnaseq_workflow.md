@@ -265,7 +265,7 @@ Now let's look at the count matrix:
 ``` bash
 $ less results/counts/Mov10_featurecounts.txt
 ```
-The count matric that we need to perform differential gene expression analysis needs to look something like this:
+The count matrix that we need to perform differential gene expression analysis needs to look something like this:
 
 <img src="../img/count_matrix.png" width=500>
 
