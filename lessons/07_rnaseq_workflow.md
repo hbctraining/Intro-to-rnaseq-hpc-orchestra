@@ -212,10 +212,10 @@ $ mkdir results/counts
 `featureCounts` is not available as a module on Orchestra, but we have already added the path for it (`/opt/bcbio/centos/bin`) to our `$PATH` variable last time. 
 
 ``` bash
-$ which featureCounts  # should return /opt/bcbio/centos/bin 
+$ which featureCounts  # should return /opt/bcbio/centos/bin/featureCounts 
 ```
 
-> ** If running the above command does not return `/opt/bcbio/centos/bin`, run `export PATH=/opt/bcbio/centos/bin:$PATH` and try the `which` command again.**
+> ** If running the above command does not return `/opt/bcbio/centos/bin/featureCounts`, run `export PATH=/opt/bcbio/centos/bin:$PATH` and try the `which` command again.**
 
 How do we use this tool, what is the command and what options/parameters are available to us?
 
