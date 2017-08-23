@@ -234,8 +234,8 @@ $ ls -lh ../results/fastqc/
 There should also be standard error (`.err`) and standard out (`.out`) files from the job listed in `~/unix_workshop/rnaseq/scripts`. You can move these over to your `logs` directory and give them more intuitive names:
 
 ```bash
-mv *.err ../logs/fastqc.err
-mv *.out ../logs/fastqc.out
+$ mv *.err ../logs/fastqc.err
+$ mv *.out ../logs/fastqc.out
 ```
 
 ***
