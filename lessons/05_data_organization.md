@@ -174,7 +174,7 @@ From this study we are using the [RNA-seq](http://www.ncbi.nlm.nih.gov/geo/query
 
 ## Understanding the workflow
 
-For any bioinformatics experiment you will have to go through a series of steps in order to obtain your final desired output. The execution of these steps in a sequential manner is what we often refer to as a **workflow or pipeline**. A simplified version of the workflow we will be using in this course is provided below. We have some of the steps briefly outlined here, but plan to cover each in more detail over the duration of this course.
+For any bioinformatics experiment you will have to go through a series of steps in order to obtain your final desired output. The execution of these steps in a sequential manner is what we often refer to as a **workflow or pipeline**. A simplified version of the workflow we will be using in this course is provided below. We have some of the steps briefly outlined here, but we will be covering some of these (\#2, \#4 and \#5) in more detail during this workshop.
 
 <img src="../img/RNAseqWorkflow.png" width="450">
 
@@ -184,6 +184,8 @@ For any bioinformatics experiment you will have to go through a series of steps 
 4. Align reads to reference genome using STAR (splice-aware aligner)
 5. Quantifying expression/Counting the number of reads mapping to each gene
 6. Statistical analysis to identify differentially expressed genes (count normalization, linear modeling using R-based tools)
+
+These workflows in bioinformatics adopt a plug-and-play approach in that the output of one tool can be easily used as input to another tool without any extensive configuration. Having standards for data formats is what makes this feasible. Standards ensure that data is stored in a way that is generally accepted and agreed upon within the community. The tools that are used to analyze data at different stages of the workflow are therefore built under the assumption that the data will be provided in a specific format.  
 
 ## Best practices for NGS Analysis 
 
