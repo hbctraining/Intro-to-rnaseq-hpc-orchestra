@@ -189,13 +189,13 @@ $ cd
 The we will run the `basename` command on one of the FASTQ files. Be sure to specify the path to the file:
 
 ```bash
-$ basename unix_workshop/raw_fastq/Mov10_oe_1.subset.fq
+$ basename ~/unix_workshop/raw_fastq/Mov10_oe_1.subset.fq
 ```
 
 What is returned to you? The filename was split into the path `unix_workshop/raw_fastq/` and the filename `Mov10_oe_1.subset.fq`. The command returns only the filename. Now, suppose we wanted to also trim off the file extension (i.e. remove `.fq` leaving only the file *base name*). We can do this by adding a parameter to the command to specify what string of characters we want trimmed.
 
 ```bash
-$ basename unix_workshop/raw_fastq/Mov10_oe_1.subset.fq .fq
+$ basename ~/unix_workshop/raw_fastq/Mov10_oe_1.subset.fq .fq
 ```
 
 You should now see that only `Mov10_oe_1.subset` is returned. 
@@ -222,7 +222,7 @@ You might not realize it, but this is something that you now know how to do. Let
 Rather than doing all of this in the terminal we are going to create a script file with all relevant commands. Move back in to `unix_workshop` and use `nano` to create our new script file:
 
 ```bash
-$ cd unix_workshop
+$ cd ~/unix_workshop
 
 $ nano generate_bad_reads_summary.sh
 ```
