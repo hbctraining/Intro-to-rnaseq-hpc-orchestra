@@ -70,6 +70,20 @@ fq=$1
 >
 > using the `fq` variable => `fastqc $fq`
 
+To ensure that all the output files from the workflow are properly named with sample IDs we should extract the "base name" (or sample ID) from the name of the input file.
+
+```
+# grab base of filename for naming outputs
+
+base=$(basename $fq .subset.fq)
+echo "Sample name is $base"           
+```
+
+> **Remember `basename`?**
+>
+> 1. the `basename` command: this command takes a path or a name and trims away all the information before the last `\` and if you specify the string to clear away at the end, it will do that as well. In this case, if the variable `$fq` contains the path *"~/unix_workshop/rnaseq/raw_data/Mov10_oe_1.subset.fq"*, `basename $fq .subset.fq` will output "Mov10_oe_1".
+> 2. to assign this value to the `base` variable, we place the `basename...` command in parentheses and put a `$` outside. This syntax is necessary for assigning the output of a command to a variable.
+
 Next we want to specify how many cores the script should use to run the analysis. This provides us with an easy way to modify the script to run with more or fewer cores without have to replace the number within all commands where cores are specified.
 
 ```
@@ -77,7 +91,6 @@ Next we want to specify how many cores the script should use to run the analysis
 
 cores=2
 ```
-
 Next we'll initialize 2 more variables named `genome` and `gtf`, these will contain the paths to where the reference files are stored. This makes it easier to modify the script for when you want to use a different genome, i.e. you'll just have to change the contents of these variable at the beginning of the script.
 
 ```
@@ -109,20 +122,6 @@ align_out=~/unix_workshop/rnaseq/results/STAR/${base}_
 counts_input_bam=~/unix_workshop/rnaseq/results/STAR/${base}_Aligned.sortedByCoord.out.bam
 counts=~/unix_workshop/rnaseq/results/counts/${base}_featurecounts.txt
 ```
-
-This is the last variable we will set up. To ensure that all the output files from the workflow are properly named with sample IDs we should extract the "base name" (or sample ID) from the name of the input file.
-
-```
-# grab base of filename for naming outputs
-
-base=$(basename $fq .subset.fq)
-echo "Sample name is $base"           
-```
-
-> **Remember `basename`?**
->
-> 1. the `basename` command: this command takes a path or a name and trims away all the information before the last `\` and if you specify the string to clear away at the end, it will do that as well. In this case, if the variable `$fq` contains the path *"unix_workshop_other/trimmed_fastq/Mov10_oe_1.qualtrim25.minlen35.fq"*, `basename $fq .qualtrim25.minlen35.fq` will output "Mov10_oe_1".
-> 2. to assign this value to the `base` variable, we place the `basename...` command in parentheses and put a `$` outside. This syntax is necessary for assigning the output of a command to a variable.
 
 ### Keeping track of tool versions
 
