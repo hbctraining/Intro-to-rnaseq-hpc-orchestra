@@ -63,33 +63,23 @@ We first need to load the R module:
 
 You can open R by simply typing `R` at the command prompt and pressing `Enter`. You are now in the R console (note that the command prompt has changed to a `>` instead of a `$`):
 
+**ADD NEW SCREENSHOT**
+
 ![Rconsole](../img/R_screenshot.png)
 
 
-To install the packages we need we have created an R script for you to run from the command line, but normally you would do so with commands in the R console. **Since we are running a script we can exit R with:**
+Rather than installing the packages required for the analysis, we have already done this for you. Packages are bundles of code that perform functions and include detailed documentation on how to use those functions. Once installed, they are referred to as _libraries_.  **To use the libraries we have created for you first exit R with:**
 
 	q()
 
 
-You should find yourself back at the shell command prompt. We will first need to copy over the installation script and setup some important _environment variables_. 
+You should find yourself back at the shell command prompt. The next few lines will set the environment variable `R_LIBS_USER` to let R know where the R libraries directory resides.
 
-	$ cp /groups/hbctraining/unix_workshop_other/install_libraries.R .
+	$ echo 'R_LIBS_USER="/groups/hbctraining/unix_workshop_other/R-3.3.1"' >  $HOME/.Renviron
+	$ export R_LIBS_USER="/groups/hbctraining/unix_workshop_other/R-3.3.1"
 
-The next few lines will create a directory in your home folder for installing any R packages. Packages are bundles of code that perform functions and include detailed documentation on how to use those functions. Once installed, they are referred to as _libraries_. Setting the environment variable will let R know where the R libraries directory resides.
 
-	$ mkdir -p ~/R/library
-	$ echo 'R_LIBS_USER="~/R/library"' >  $HOME/.Renviron
-	$ export R_LIBS_USER="/home/user_name/R/library"
-
-Now you should be able to run the installation script:
-
-	
-	$ Rscript install_libraries.R			
-	
-
-> *Rscript* is a command that, at minimum, accepts an R script as input. The script contains lines of code to carry out a series of tasks using various functions. You can explore the R commands within the install_libraries.R script using `less` or `nano`.	
-
-**The installation script may take a few minutes to run**, and you will see quite a bit of text being printed to screen. The reason for this is that R is also installing any dependencies and updating existing packages as required. If the packages installed successfully you will now be able to run the DE script. We are going to run the script from the `results` directory, so let's navigate there and create a directory for the results of our analysis. We will call the directory `diffexpression`:
+To run differential expression analysis, we are going to run a script from the `results` directory, so let's navigate there and create a directory for the results of our analysis. We will call the directory `diffexpression`:
 
 	$ cd results
 	$ mkdir diffexpression
