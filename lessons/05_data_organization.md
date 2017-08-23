@@ -158,7 +158,7 @@ Another aspect of staying organized is making sure that all the filenames in an 
 - Take a moment to create a README for the `rnaseq/` folder (hint: use `nano` to create the file). Give a short description of the project and brief descriptions of the types of files you will be storing within each of the sub-directories. 
 ***
 
-## Understanding the dataset
+## The example dataset
 
 The dataset we are using is part of a larger study described in [Kenny PJ et al., *Cell Rep* 2014](http://www.ncbi.nlm.nih.gov/pubmed/25464849). The authors are investigating interactions between various genes involved in Fragile X syndrome, a disease of aberrant protein production, which results in cognitive impairment and autistic-like features. **The authors sought to show that RNA helicase MOV10 regulates the translation of RNAs involved in Fragile X syndrome.**
 
@@ -172,7 +172,7 @@ From this study we are using the [RNA-seq](http://www.ncbi.nlm.nih.gov/geo/query
 
 ![Automation](../img/exp_design.png)
 
-## Understanding the workflow
+## The RNA-seq workflow
 
 For any bioinformatics experiment you will have to go through a series of steps in order to obtain your final desired output. The execution of these steps in a sequential manner is what we often refer to as a **workflow or pipeline**. A simplified version of the workflow we will be using in this course is provided below. We have some of the steps briefly outlined here, but we will be covering some of these (\#2, \#4 and \#5) in more detail during this workshop.
 
