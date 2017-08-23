@@ -156,7 +156,7 @@ Now let's put it all together! The full STAR alignment command is provided below
 ```bash
 $ STAR --runThreadN 6 \
 --genomeDir /groups/hbctraining/unix_workshop_other/reference_STAR \
---readFilesIn raw_data/Mov10_oe_1_subset.fq \
+--readFilesIn raw_data/Mov10_oe_1.subset.fq \
 --outFileNamePrefix results/STAR/Mov10_oe_1_ \
 --outSAMtype BAM SortedByCoordinate \
 --outSAMunmapped Within \
