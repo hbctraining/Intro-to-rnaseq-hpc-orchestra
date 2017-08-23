@@ -291,7 +291,7 @@ Save and exit `nano`, and voila! You now have a script you can use to assess the
 cd ~/unix_workshop/raw_fastq
 
 # count bad reads for each FASTQ file in our directory
-for filename in *.fastq 
+for filename in *.fq 
 do 
 
   # create a prefix for all output files
