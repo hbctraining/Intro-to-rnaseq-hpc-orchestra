@@ -255,13 +255,13 @@ This script loops through the same files as in the previous (demo) script, but t
 for fq in ~/unix_workshop/rnaseq/raw_data/*.fq
 do
   
-  bsub -q training -n 6 -W 1:30 -R "rusage[mem=4000]" -J rnaseq_mov10 -o %J.out -e %J.err "sh rnaseq_analysis_on_input_file.sh $fq"
+  bsub -q training -n 6 -W 1:30 -R "rusage[mem=4000]" -J rnaseq_mov10 -o %J.out -e %J.err "sh ~/unix_workshop/rnaseq/scripts/rnaseq_analysis_on_input_file.sh $fq"
   
   sleep 1	# wait 1 second between each job submission
   
 done
 ```
-Please note that after the `bsub` directives the command `sh rnaseq_analysis_on_input_file.sh $fq` is in quotes.
+Please note that after the `bsub` directives the command `sh ~/unix_workshop/rnaseq/scripts/rnaseq_analysis_on_input_file.sh $fq` is in quotes.
 
 What you should see on the output of your screen would be the jobIDs that are returned from the scheduler for each of the jobs that your script submitted.
 
