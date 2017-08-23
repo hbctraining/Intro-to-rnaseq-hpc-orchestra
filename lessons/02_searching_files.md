@@ -191,7 +191,7 @@ We will define the uniqueness of an exon by its genomic coordinates. Therefore, 
 $ grep exon chr1-hg19_genes.gtf | cut -f1,4,5,7  | head
 ```
    
-'-f1,4,5,7' means to cut these fields (columns) from the dataset.  
+`-f1,4,5,7` means to cut these fields (columns) from the dataset.  
 
 	chr1	14362	14829	-
 	chr1	14970	15038	-
