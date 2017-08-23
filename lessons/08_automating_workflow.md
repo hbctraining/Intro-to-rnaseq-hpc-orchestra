@@ -84,7 +84,7 @@ Next we'll initialize 2 more variables named `genome` and `gtf`, these will cont
 # directory with genome reference FASTA and index files + name of the gene annotation file
 
 genome=/groups/hbctraining/unix_workshop_other/reference_STAR/
-gtf=~/unix_workshop/rnaseq/data/reference_data/chr1-hg19_genes.gtf
+gtf=~/unix_workshop/rnaseq/reference_data/chr1-hg19_genes.gtf
 ```
 
 We'll create output directories, but with the `-p` option. This will make sure that `mkdir` will create the directory only if it does not exist, and it won't throw an error if it does exist.
@@ -155,8 +155,6 @@ echo "Processing file $fq"
 ```
 # Run FastQC and move output to the appropriate folder
 fastqc $fq
-# Move the output to a dedicated folder
-mv *fastqc* $fastqc_out
 
 # Run STAR
 STAR --runThreadN $cores --genomeDir $genome --readFilesIn $fq --outFileNamePrefix $align_out --outFilterMultimapNmax 10 --outSAMstrandField intronMotif --outReadsUnmapped Fastx --outSAMtype BAM SortedByCoordinate --outSAMunmapped Within --outSAMattributes NH HI NM MD AS
