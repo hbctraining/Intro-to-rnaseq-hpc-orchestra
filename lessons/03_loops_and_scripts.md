@@ -321,7 +321,7 @@ $ sh generate_bad_reads_summary.sh
 To keep our data organized, let's move all of the bad read files out of the `raw_fastq` directory into a new directory called `other`, and the script to a new directory called `scripts`.
 
 ```bash
-$ mkdir other scripts
+$ mkdir scripts
 
 $ mv raw_fastq/*bad* other/
 $ mv generate_bad_reads_summary.sh scripts/
