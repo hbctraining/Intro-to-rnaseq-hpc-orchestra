@@ -86,24 +86,23 @@ To run differential expression analysis, we are going to run a script from the `
 
 First, let's copy over the script file:
 
-	$ cp /groups/hbctraining/unix_workshop_other/DE_script.R diffexpression/
+	$ cp /groups/hbctraining/unix_workshop_other/DESeq2_script.R diffexpression/
 
 The DE script will require as input **1) your count matrix file** and **2) a metadata file**. The count matrix we generated in the last lesson and is in the `counts` directory. The metadata file is a tab-delimited file which contains any information associated with our samples. Each row corresponds to a sample and each column contains some information about each sample.
 
-> If you _didn't generate this file in class_ we have a pre-computed count matrix generated that you can use:
-> 
-> 	$ cp /groups/hbctraining/unix_workshop_other/counts_STAR/Mov10_rnaseq_counts_complete.txt diffexpression
-
-
-
 	$ cp ~/unix_workshop/other/Mov10_rnaseq_metadata.txt diffexpression
 
-> Once you have the files copied, take a look at the metadata using `less`.
+> **NOTE:** If you _didn't generate this file in class_ we have a pre-computed count matrix generated that you can use:
+>  
+>  `$ cp /groups/hbctraining/unix_workshop_other/counts_STAR/Mov10_rnaseq_counts_complete.txt diffexpression`
+> 
+
+Once you have the files copied, take a quick look at the metadata using `less`.
 
 Ok, now we're all setup to run our R script! Let's run it from within our `diffexpression` directory,
 
 	$ cd diffexpression
-	$ Rscript DE_script.R Mov10_rnaseq_counts_complete.txt Mov10_rnaseq_metadata.txt 
+	$ Rscript DESeq2_script.R Mov10_rnaseq_counts_complete.txt Mov10_rnaseq_metadata.txt 
 
 
 > How many files do you get as output from the script? There should be a few PNG files and text files. Use Filezilla or `scp` to copy the images over to your laptop and take a look what was generated. How well do the replicates cluster based on the plots that were generated?
@@ -115,14 +114,15 @@ There are two results files generated from `DE_script.R`, a full table and signi
 
 	$ head DEresults_sig_table.txt
 
-You should have a table with 6 columns in it:
+You should have a table with 7 columns in it:
 
 1. Gene symbols (this will not have a column name, due to the nature of the `write` function)
-2. logFC
-3. logCPM (average expression across all samples)
-4. Log odds ratio
-5. P-value
-6. FDR value
+2. baseMean: the average normalized counts across all samples
+3. log2FoldChange
+4. lfcse: the standard error of the log2 FC
+5. stat: the Wald test statistic
+6. pvalue
+7. padj: p-value adjusted for multiple test correction using the BH method
 
 Since we have the full table of values we could theoretically use that and filter the genes to our discretion. We could also increase stringency by adding in a fold change criteria. The full table is also useful for investigating genes of interest that did not appear in our significant list, and give us some insight into whether the gene missed the threshold marginally or by a landslide. 
 
@@ -133,7 +133,7 @@ Using `wc -l` find out how many genes are identified in the significant table? K
 
 For downstream analysis, the relevant information that we will require from this results table is the gene names and the FDR value. We can cut the columns to a new file and and use that as input to some functional analaysis tools.
 
-	cut -f1,6 DEresults_sig_table.txt > Mov10_sig_genelist.txt
+	cut -f1,7 DEresults_sig_table.txt > Mov10_sig_genelist.txt
   
 Since the list we have is generated from analaysis on a small subset of chromosome 1, using these genes as input to downstream tools will not provide any meaningful results. As such, **we have generated a list using the full dataset for these samples and can be downloaded to your laptop via [this link](../genelist_edgeR_Mov10oe_1.0FC.txt).** From the full dataset analysis, 453 genes were identified as significant if they had an FDR < 0.05 _and_ a log fold change > 1.  
 
