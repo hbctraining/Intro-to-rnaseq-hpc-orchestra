@@ -274,7 +274,7 @@ Since the featureCounts output has additional columns with information about gen
 > ``` bash
 > $ cut -f1,7,8,9,10,11,12 results/counts/Mov10_featurecounts.txt > results/counts/Mov10_featurecounts.Rmatrix.txt
 > ```
-> This should also be cleaned up further by changing the column names (headers) to simpler, smaller sampleIDs.
+> This should also be cleaned up further by removing the first header line, and modifying the column names (headers) to simpler, smaller sampleIDs.
 
 ***
 
