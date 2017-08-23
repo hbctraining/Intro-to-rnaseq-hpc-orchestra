@@ -34,6 +34,7 @@ We can write a shell script that will run on a specific file, but to make it mor
 For example, we can refer to the components of the following command as numbered variables **within** the actual script:
 
 ```bash
+# * DO NOT RUN *
 sh  run_rnaseq.sh  input.fq  input.gtf  12
 ```
 
