@@ -293,7 +293,7 @@ To ready this text file (count matrix) for the next step of differential gene ex
 
 ### Next Steps: Performing DE analysis on the count matrix
 
-This text file with a matrix of raw counts can be used as input to tools like [DESeq2](http://bioconductor.org/packages/release/bioc/html/DESeq2.html), [EdgeR](http://bioconductor.org/packages/release/bioc/html/edgeR.html) and [limma-voom](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29). Running the DE analysis tools are outside the scope of this workshop since they require a working knowledge of R. We do have [additional materials] that you can go through for performing these analyses using the MOV10 dataset, and we might walk through them if time permits today. 
+This text file with a matrix of raw counts can be used as input to tools like [DESeq2](http://bioconductor.org/packages/release/bioc/html/DESeq2.html), [EdgeR](http://bioconductor.org/packages/release/bioc/html/edgeR.html) and [limma-voom](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29). Running the DE analysis tools are outside the scope of this workshop since they require a working knowledge of R. We do have [additional materials](https://github.com/hbctraining/Intro-to-rnaseq-hpc/blob/master/lessons/DE_analysis.md) that you can go through for performing these analyses using the MOV10 dataset, and we might walk through them if time permits today. 
 
 ### Visual assessment of the alignment
 
