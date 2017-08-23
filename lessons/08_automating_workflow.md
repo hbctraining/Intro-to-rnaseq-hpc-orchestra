@@ -73,6 +73,8 @@ fq=$1
 Next we want to specify how many cores the script should use to run the analysis. This provides us with an easy way to modify the script to run with more or fewer cores without have to replace the number within all commands where cores are specified.
 
 ```
+# specify the number of cores to use
+
 cores=2
 ```
 
