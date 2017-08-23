@@ -248,7 +248,7 @@ and the following are the values for the required parameters:
 #### Running featureCounts
 
 ``` bash
-$ featureCounts -T 4 -s 2 \ 
+$ featureCounts -T 4 -s 2 \
   -a ~/unix_workshop/rnaseq/reference_data/chr1-hg19_genes.gtf \
   -o ~/unix_workshop/rnaseq/results/counts/Mov10_featurecounts.txt \
   ~/unix_workshop/rnaseq/results/STAR/*bam
