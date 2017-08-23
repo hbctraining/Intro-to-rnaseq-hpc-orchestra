@@ -12,8 +12,6 @@ Approximate time: 60 minutes
 - Learn how to write to file and append to file using output redirection
 - Explore how to use the pipe (`|`) character to chain together commands
 
-
-
 ## Searching files
 
 We went over how to search within a file using `less`. We can also
@@ -31,7 +29,7 @@ We are going to practice searching with `grep` using our fastq files, which cont
 Suppose we want to see how many reads in our file `Mov10_oe_1.subset.fq` are "bad", with 10 consecutive Ns (`NNNNNNNNNN`).
 
 ```bash
-$ cd ~/ngs_course/unix_lesson/raw_fastq
+$ cd ~/unix_workshop/raw_fastq
 
 $ grep NNNNNNNNNN Mov10_oe_1.subset.fq
 ```
