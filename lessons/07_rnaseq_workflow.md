@@ -271,10 +271,15 @@ The count matrix that we need to perform differential gene expression analysis n
 
 Since the featureCounts output has additional columns with information about genomic coordinates, gene length etc., we can use the `cut` command to select only those columns that you are interested in. 
 	
-> ``` bash
-> $ cut -f1,7,8,9,10,11,12 results/counts/Mov10_featurecounts.txt > results/counts/Mov10_featurecounts.Rmatrix.txt
-> ```
-> This should also be cleaned up further by removing the first header line, and modifying the column names (headers) to simpler, smaller sampleIDs.
+``` bash
+$ cut -f1,7,8,9,10,11,12 results/counts/Mov10_featurecounts.txt > results/counts/Mov10_featurecounts.Rmatrix.txt
+```
+
+```bash
+less results/counts/Mov10_featurecounts.Rmatrix.txt
+```
+
+To ready this text file (count matrix) for the next step of differential gene expression analysis, you will need to clean it up further by removing the first header line, and modifying the column names (headers) to simpler, smaller sampleIDs.
 
 ***
 
