@@ -193,7 +193,7 @@ The first thing we need in our script is the **shebang line**:
 Following the shebang line are the Orchestra options. For the script to run, we need to include options for **queue (-q) and runtime limit (-W)**. To specify our options, we precede the option with `#BSUB`, which tells Orchestra that the line contains options for job submission. 
 
 ```bash
-#BSUB -q priority 		# queue name
+#BSUB -q training 		# queue name
 #BSUB -W 2:00 		# hours:minutes runlimit after which job will be killed
 #BSUB -n 6 		# number of cores requested -- this needs to be greater than or equal to the number of cores you plan to use to run your job
 #BSUB -J rnaseq_mov10_fastqc 		# Job name
