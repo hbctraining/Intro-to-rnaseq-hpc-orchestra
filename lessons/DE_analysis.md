@@ -131,7 +131,7 @@ Since the list we have is generated from analaysis on a small subset of chromoso
 
 ![gprofiler](../img/gProfiler.png)
 
-Take your gene list and paste it in the `Query' box. 
+Take your gene list and paste it in the Query box. 
 
 * Under **Options**: keep all defaults checked but for _Hierarchical Filtering_ use the pulldown to select _Best per parent_
 * Choose **Show advanced options** and change the _Significance threshold_ to _Benjamini-Hochberg_
@@ -150,14 +150,17 @@ Take your gene list and paste it in the `Query' box.
 
 > Use the significant gene list generated from the analysis we performed in class (~40 genes) as input to GeneMANIA. Using only pathway and coexpression data as evidence, take a look at the network that results. Can you predict anything functionally from this set of genes? 
 
-
 In addition, we need to be able to use the resulting non-normalized values which contain decimal places as input to create the DESeq object. Finally, to use DESeq2 we need to be able to tell which transcript is associated with which gene, since DESeq2 performs gene-level differential expression.
 
 ### Differential expression analysis using pseudocounts 
 
-In the script above we rused count data generated from the standard RNA-seq workflow. as input
+In the script we used above, we used count data generated from the standard RNA-seq workflow as input. The instructions are below to perform a similar analysis with the output from Salmon. To perform this analysis, you will need to use R and Rstudio directly. We do not have a script available that works on Orchestra. 
 
-You can download the directory with the quant.sf files for the 8 full datasets using the link below. Once you have them downloaded continue to follow the set of instructions:
+**The rest of this section assumes that you are comfortable with R and RStudio.**
+
+The output from Salmon is transcript counts, but DESeq2 works well only with gene counts. To bridge this gap, the developers of DESeq2 have developed a package makes the output of Salmon compatible with DESeq2. This package is called [`tximport`](https://bioconductor.org/packages/release/bioc/html/tximport.html) and is also vailable through Bioconductor. `tximport` imports transcript-level abundance, estimated counts and transcript lengths, and summarizes this into matrices for use with downstream gene-level analysis packages. 
+
+First, you have to download the directory with the quant.sf files for the 8 full datasets using the link below. Once you have them downloaded continue to follow the rest of instructions:
 
 1. [Download Salmon files](https://www.dropbox.com/s/aw170f8zge01jpq/salmon.zip?dl=0)
 2. Decompress (unzip) the zip archive and move the folder to an appropriate location (i.e `~/Desktop`)
@@ -168,18 +171,17 @@ Your Rstudio interface should look something like the screenshot below:
 
 <img src="../img/salmon_rstudio.png" size=600>
 
-The developers of DESeq2 have developed a package that can make the conversion of alignment-free methods of quantification compatible for DESeq2. This package is called [`tximport`](https://bioconductor.org/packages/release/bioc/html/tximport.html) and is available through Bioconductor. `tximport` imports transcript-level abundance, estimated counts and transcript lengths, and summarizes this into matrices for use with downstream gene-level analysis packages. 
+To perform this analysis you will have to install the following libraries:
 
-**Step 1:** Install the `tximport` package and the `readr` package (you'll only need to do this once):
-    
-```R
-# Install from Bioconductor
-source("http://bioconductor.org/biocLite.R")
-biocLite("tximport")
-biocLite("readr")
-```
+`tximport`
 
-**Step 2:** Load the required libraries:
+`readr`
+
+`DESeq2`
+
+`biomaRt`
+
+**Step 1:** Load the required libraries:
 
 ```R
 # Load libraries
@@ -187,10 +189,9 @@ library(tximport)
 library(readr)
 library(DESeq2)
 library(biomaRt) # tximport requires gene symbols as row names
-
 ```
 
-**Step 3:** Load the quantification data that was output from Salmon:
+**Step 2:** Load the quantification data that was output from Salmon:
 
 ```R
 ## List all directories containing data  
@@ -201,31 +202,15 @@ files <- file.path(samples, "quant.sf")
     
 ## Since all quant files have the same name it is useful to have names for each element
 names(files) <-  samples
- ```
-    
-> **OPTION 2: An alternative to this is having absolute paths instead of relative paths.** This would be useful so you can run this from anywhere in your filesystem.
->
-
-```R
-## DO NOT RUN
-dir <- getwd()
-files <- file.path(dir, samples, "quant.sf")
-	
-## Create your own function
-assignNames <- function(x){
-		strsplit(x, "/")[[1]][6]
-		}
-names(files) <- sapply(files, assignNames, USE.NAMES=F)
 ```
 
-Either of these methods will work, or even a combination of the two. The **main objective here is to add names to our quant files which will allow us to easily discriminate between samples in the final output matrix**. 
+The **main objective here is to add names to our quant files which will allow us to easily discriminate between samples in the final output matrix**. 
 
-**Step 4.** Create a dataframe containing Ensembl Transcript IDs and Gene symbols
+**Step 3.** Create a dataframe containing Ensembl Transcript IDs and Gene symbols
 
-Our Salmon index was generated with transcript sequences listed by Ensembl IDs, but `tximport` needs to know **which genes these transcripts came from**, so we need to use the `biomaRt` package to extract this information. However, since BiomaRt has been a little unreliable we are actually not going to use this code right now.
+Our Salmon index was generated with transcript sequences listed by Ensembl IDs, but `tximport` needs to know **which genes these transcripts came from**, so we need to use the `biomaRt` package to extract this information. 
 
 > *NOTE:* Keep in mind that the Ensembl IDs listed in our Salmon output contained version numbers (i.e ENST00000632684.1). If we query Biomart with those IDs it will not return anything. Therefore, before querying Biomart in R do not forget to strip the version numbers from the Ensembl IDs.
-
 
 ```R
 ## DO NOT RUN
@@ -255,7 +240,7 @@ tx2gene <- getBM(
 tx2gene <- read.delim("tx2gene.txt",sep="\t")
 ```
     
-**Step 5:** Run tximport to summarize gene-level information    
+**Step 4:** Run tximport to summarize gene-level information    
 ```R
 ?tximport   # let's take a look at the arguments for the tximport function
 
@@ -269,12 +254,9 @@ attributes(txi)
 ```
 A final element 'countsFromAbundance' carries through the character argument used in the tximport call. The length matrix contains the average transcript length for each gene which can be used as an offset for gene-level analysis. 
 
-
 ### Using DESeq2 for DE analysis with pseudocounts
 
 ```R    
-library(DESeq2)   # load this if you have not loaded it earlier
-
 ## Create a sampletable/metadata
 
 # Before we create this metadata object, let's see what the sample (column) order of the counts matrix is:
@@ -287,8 +269,8 @@ sampleTable <- data.frame(condition, row.names = colnames(txi$counts))
 dds <- DESeqDataSetFromTximport(txi, sampleTable, ~ condition)
 ```
 
-Now you have created a DESeq object to proceed with DE analysis as we discussed in the last session!
-
+Now you have created a DESeq object to proceed with DE analysis you can now complete the DE analysis using methods in the script we ran
+for the counts from STAR. 
 
 ### Resources for R
 
