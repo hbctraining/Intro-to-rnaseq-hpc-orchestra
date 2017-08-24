@@ -154,7 +154,7 @@ Now let's put it all together! The full STAR alignment command is provided below
 > If you like you can copy-paste it directly into your terminal. Alternatively, you can manually enter the command, but it is advisable to first type out the full command in a text editor (i.e. [Sublime Text](http://www.sublimetext.com/) or [Notepad++](https://notepad-plus-plus.org/)) on your local machine and then copy paste into the terminal. This will make it easier to catch typos and make appropriate changes. 
 
 ```bash
-$ STAR --runThreadN 6 \
+$ STAR --runThreadN 3 \
 --genomeDir /groups/hbctraining/unix_workshop_other/reference_STAR \
 --readFilesIn raw_data/Mov10_oe_1.subset.fq \
 --outFileNamePrefix results/STAR/Mov10_oe_1_ \
