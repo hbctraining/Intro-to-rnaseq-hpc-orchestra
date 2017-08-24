@@ -131,18 +131,18 @@ $ fastqc *.fq
 
 *Did you notice how each file was processed serially? How do we speed this up?*
 
-Exit the interactive session and start a new one with 6 cores, and use the multi-threading functionality of FastQC to run 6 jobs at once.
+Exit the interactive session and start a new one with 3 cores, and use the multi-threading functionality of FastQC to run 3 jobs at once.
 
 ```bash
 $ exit  #exit the current interactive session
 
-$ bsub -Is -n 6 -q interactive bash   #start a new session with 6 cores (-n 6)
+$ bsub -Is -n 3 -q interactive bash   #start a new session with 6 cores (-n 6)
 
 $ module load seq/fastqc/0.11.3  #reload the module for the new session
 
 $ cd ~/unix_workshop/rnaseq/raw_data
 
-$ fastqc -t 6 *.fq  #note the extra parameter we specified for 6 threads
+$ fastqc -t 3 *.fq  #note the extra parameter we specified for 6 threads
 ```
 
 How did I know about the -t argument for FastQC?
@@ -165,7 +165,7 @@ $ mv *fastqc* ~/unix_workshop/rnaseq/results/fastqc/
 ```
 
 ### Performing quality assessment using job submission scripts
-So far in our FASTQC analysis, we have been directly submitting commands to Orchestra using an interactive session (ie. `bsub -Is -n 6 -q interactive bash`). However, there are many more queues available on Orchestra than just the interactive queue. We can submit commands or series of commands to these queues using job submission scripts. 
+So far in our FASTQC analysis, we have been directly submitting commands to Orchestra using an interactive session (ie. `bsub -Is -n 3 -q interactive bash`). However, there are many more queues available on Orchestra than just the interactive queue. We can submit commands or series of commands to these queues using job submission scripts. 
 
 **Job submission scripts** for Orchestra are just regular scripts, but contain the Orchestra **options/directives** for job submission, such as *number of cores, name of queue, runtime limit, etc*. We can submit these scripts to whichever queue we specify in the script using the `bsub` command as follows:
 
