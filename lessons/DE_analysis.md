@@ -1,4 +1,4 @@
-Learning Objectives:
+## Learning Objectives:
 -------------------
 
 * Run R scripts from the Unix command line
@@ -7,7 +7,7 @@ Learning Objectives:
 * Familiarize yourselft with various functional analysis tools for gene lists
 
 
-Differential expression analysis
+## Differential expression analysis
 -------------------
 
 At the end of the workflow from the last lesson, our final end product was a count matrix. This is a matrix in which each row represents a gene (or feature) and each column corresponds to a sample. In our dataset, we have two sample classes (control and Mov10oe) and we want to assess the difference in expression between these groups on a gene-by-gene basis.
@@ -44,8 +44,6 @@ We first need to load the R module:
 $ module load stats/R/3.3.1
 ```
 You can open R by simply typing `R` at the command prompt and pressing `Enter`. You are now in the R console (note that the command prompt has changed to a `>` instead of a `$`):
-
-**ADD NEW SCREENSHOT**
 
 ![Rconsole](../img/R_screenshot.png)
 
@@ -245,22 +243,6 @@ dds <- DESeqDataSetFromTximport(txi, sampleTable, ~ condition)
 
 Now you have created a DESeq object to proceed with DE analysis you can now complete the DE analysis using methods in the script we ran
 for the counts from STAR. 
-
-#### gProfiler
-
-[gProfileR](http://biit.cs.ut.ee/gprofiler/index.cgi) is a web-based tool for the interpretation of large gene lists. The core tool takes a gene list as input and performs statistical enrichment analysis to provide interpretation to user-provided gene lists. Multiple sources of functional evidence are considered, including Gene Ontology terms, biological pathways, regulatory motifs of transcription factors and microRNAs, human disease annotations and protein-protein interactions. The user selects the organism and the sources of evidence to test. There are also additional parameters to change various thresholds and tweak the stringency to the desired level. 
-
-![gprofiler](../img/gProfiler.png)
-
-Take your gene list and paste it in the Query box. 
-
-* Under **Options**: keep all defaults checked but for _Hierarchical Filtering_ use the pulldown to select _Best per parent_
-* Choose **Show advanced options** and change the _Significance threshold_ to _Benjamini-Hochberg_
-* From the functional evidence selections choose the following: Gene Ontology (biological process, molecular function), KEGG, Reactome
-* Press **g:Profile!** 
-
-
-> Take a look at the list of terms that appear. Do you see anything relevant, given what you know about this dataset? Run the analysis again but this time change the appropriate parameter to export your results to file. 
 
 ### Resources for R
 
