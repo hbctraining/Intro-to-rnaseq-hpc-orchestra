@@ -30,68 +30,52 @@ These methods determine, for each gene, whether the differences in expression (c
 
 ### Running R scripts
 
-In order to run R on Orchestra, let's first log on to the cluster and start an interactive session. Note that this time we are adding the `-X` flag to the `ssh` command. This flag is required for X11 forwarding. For more details on how to set this up see the note below. 
+In order to run R on Orchestra, let's first log on to the cluster and start an interactive session with 1 core.
 
-	$ ssh -X username@orchestra.med.harvard.edu
-	$ bsub -Is -q interactive bash 
+Once you are in an interactive session, navigate to the `rnaseq` directory:
 
-
-> **NOTE:** A number of programs with graphical user interfaces (e.g. R, Matlab) use the X11 system which lets the program run on an remote computer, but display the graphics on your desktop. On the Orchestra cluster, any graphics in R that are directly plotted to file also require X11 forwarding. To do this, you need to have an X11 server running on the client (your desktop), and your SSH connection needs to have X11 forwarding enabled. 
-> 
-> There are different instructions provided below depending on your operating system:
-> 
-> **For Mac Users:** Install [Xquartz](http://xquartz.macosforge.org/landing/) and have it running on your laptop, and use the xterm to login to Orchestra:
-> 
-> 	`$ ssh -X username@orchestra.med.harvard.edu`
-> 
-> **For Windows Users**
-> Install [Xming](http://sourceforge.net/projects/xming/) and have it running on your laptop.
-> 1. Open GitBash from the Start Menu.
-> 2. Export display environment on the bash command: `export DISPLAY=localhost:0`
-> 3. ssh to the target machine with x11 forwarding enabled: `ssh -XY username@orchestra.med.harvard.edu`
-
-Once you are in, navigate to the `rnaseq_project` directory:
-
-	$ cd unix_workshop/rnaseq
+	$ cd ~/unix_workshop/rnaseq
 
 We will be running an R script that uses the R package [DESeq2](http://bioconductor.org/packages/release/bioc/html/DESeq2.html) to identify differentially expressed genes. This package is available from [Bioconductor](https://www.bioconductor.org/), which is a repository of packages for the analysis of high-throughput genomic data. There are also a few other packages that are required to generate some additional figures.
 
 We first need to load the R module:
 
-	$ module load stats/R/3.3.1
-
-
+```bash
+$ module load stats/R/3.3.1
+```
 You can open R by simply typing `R` at the command prompt and pressing `Enter`. You are now in the R console (note that the command prompt has changed to a `>` instead of a `$`):
 
 **ADD NEW SCREENSHOT**
 
 ![Rconsole](../img/R_screenshot.png)
 
-
 Rather than installing the packages required for the analysis, we have already done this for you. Packages are bundles of code that perform functions and include detailed documentation on how to use those functions. Once installed, they are referred to as _libraries_.  **To use the libraries we have created for you first exit R with:**
 
-	q()
-
-
+```R
+q()
+```
 You should find yourself back at the shell command prompt. The next few lines will set the environment variable `R_LIBS_USER` to let R know where the R libraries directory resides.
 
-	$ echo 'R_LIBS_USER="/groups/hbctraining/unix_workshop_other/R-3.3.1"' >  $HOME/.Renviron
-	$ export R_LIBS_USER="/groups/hbctraining/unix_workshop_other/R-3.3.1"
-
+```bash
+$ echo 'R_LIBS_USER="/groups/hbctraining/unix_workshop_other/R-3.3.1"' >  $HOME/.Renviron
+$ export R_LIBS_USER="/groups/hbctraining/unix_workshop_other/R-3.3.1"
+```
 
 To run differential expression analysis, we are going to run a script from the `results` directory, so let's navigate there and create a directory for the results of our analysis. We will call the directory `diffexpression`:
 
-	$ cd ~/unix_workshop/rnaseq/results
-	$ mkdir diffexpression
-
+```bash
+$ cd ~/unix_workshop/rnaseq/results
+$ mkdir diffexpression
+```
 First, let's copy over the script file:
-
-	$ cp /groups/hbctraining/unix_workshop_other/DESeq2_script.R diffexpression/
-
+```bash
+$ cp /groups/hbctraining/unix_workshop_other/DESeq2_script.R diffexpression/
+```
 The DE script will require as input **1) your count matrix file** and **2) a metadata file**. The count matrix we generated in the last lesson and is in the `counts` directory. The metadata file is a tab-delimited file which contains any information associated with our samples. Each row corresponds to a sample and each column contains some information about each sample.
 
-	$ cp ~/unix_workshop/other/Mov10_rnaseq_metadata.txt diffexpression
-
+```bash
+$ cp ~/unix_workshop/other/Mov10_rnaseq_metadata.txt diffexpression
+```
 > **NOTE:** If you _didn't generate this file in class_ we have a pre-computed count matrix generated that you can use:
 >  
 >  `$ cp /groups/hbctraining/unix_workshop_other/counts_STAR/Mov10_rnaseq_counts_complete.txt diffexpression`
@@ -100,10 +84,10 @@ The DE script will require as input **1) your count matrix file** and **2) a met
 Once you have the files copied, take a quick look at the metadata using `less`.
 
 Now we're all setup to run our R script! Let's run it from within our `diffexpression` directory,
-
-	$ cd diffexpression
-	$ Rscript DESeq2_script.R Mov10_rnaseq_counts_complete.txt Mov10_rnaseq_metadata.txt 
-
+```bash
+$ cd diffexpression
+$ Rscript DESeq2_script.R Mov10_rnaseq_counts_complete.txt Mov10_rnaseq_metadata.txt 
+```
 
 > How many files do you get as output from the script? There should be a few PNG files and text files. Use Filezilla or `scp` to copy the images over to your laptop and take a look what was generated. How well do the replicates cluster based on the plots that were generated?
 
@@ -112,8 +96,9 @@ Now we're all setup to run our R script! Let's run it from within our `diffexpre
 
 There are two results files generated from `DE_script.R`, a full table and significant genes table (at FDR < 0.05). Take a look at the significant results file and see what values have been reported:
 
-	$ head DEresults_sig_table.txt
-
+```bash
+$ head DEresults_sig_table.txt
+```
 You should have a table with 7 columns in it:
 
 1. Gene symbols (this will not have a column name, due to the nature of the `write` function)
@@ -126,17 +111,19 @@ You should have a table with 7 columns in it:
 
 Since we have the full table of values we could theoretically use that and filter the genes to our discretion. We could also increase stringency by adding in a fold change criteria. The full table is also useful for investigating genes of interest that did not appear in our significant list, and give us some insight into whether the gene missed the threshold marginally or by a landslide. 
 
-
 Using `wc -l` find out how many genes are identified in the significant table? Keep in mind this is generated using the truncated dataset.
 
-	$ wc -l DEresults_sig_table.txt
+```bash
+$ wc -l DEresults_sig_table.txt
+```
 
 For downstream analysis, the relevant information that we will require from this results table is the gene names and the FDR value. We can cut the columns to a new file and and use that as input to some functional analaysis tools.
 
-	cut -f1,7 DEresults_sig_table.txt > Mov10_sig_genelist.txt
-  
-Since the list we have is generated from analaysis on a small subset of chromosome 1, using these genes as input to downstream tools will not provide any meaningful results. As such, **we have generated a list using the full dataset for these samples and can be downloaded to your laptop via [this link](../genelist_edgeR_Mov10oe_1.0FC.txt).** From the full dataset analysis, 453 genes were identified as significant if they had an FDR < 0.05 _and_ a log fold change > 1.  
+```bash
+$ cut -f1,7 DEresults_sig_table.txt > Mov10_sig_genelist.txt
+```
 
+Since the list we have is generated from analaysis on a small subset of chromosome 1, using these genes as input to downstream tools will not provide any meaningful results. As such, **we have generated a list using the full dataset for these samples and can be downloaded to your laptop via [this link](../genelist_edgeR_Mov10oe_1.0FC.txt).** From the full dataset analysis, 453 genes were identified as significant if they had an FDR < 0.05 _and_ a log fold change > 1.  
 
 #### gProfiler
 
