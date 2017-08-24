@@ -136,7 +136,7 @@ Exit the interactive session and start a new one with 3 cores, and use the multi
 ```bash
 $ exit  #exit the current interactive session
 
-$ bsub -Is -n 3 -q interactive bash   #start a new session with 6 cores (-n 6)
+$ bsub -Is -n 3 -q interactive bash   #start a new session with 3 cores (-n 3)
 
 $ module load seq/fastqc/0.11.3  #reload the module for the new session
 
