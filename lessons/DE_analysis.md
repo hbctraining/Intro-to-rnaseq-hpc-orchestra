@@ -32,7 +32,7 @@ These methods determine, for each gene, whether the differences in expression (c
 
 In order to run R on Orchestra, let's first log on to the cluster and start an interactive session. Note that this time we are adding the `-X` flag to the `ssh` command. This flag is required for X11 forwarding. For more details on how to set this up see the note below. 
 
-	$ ssh -X ecommonsID@orchestra.med.harvard.edu
+	$ ssh -X username@orchestra.med.harvard.edu
 	$ bsub -Is -q interactive bash 
 
 
@@ -42,19 +42,19 @@ In order to run R on Orchestra, let's first log on to the cluster and start an i
 > 
 > **For Mac Users:** Install [Xquartz](http://xquartz.macosforge.org/landing/) and have it running on your laptop, and use the xterm to login to Orchestra:
 > 
-> 	`$ ssh -X user_name@orchestra.med.harvard.edu`
+> 	`$ ssh -X username@orchestra.med.harvard.edu`
 > 
 > **For Windows Users**
 > Install [Xming](http://sourceforge.net/projects/xming/) and have it running on your laptop.
 > 1. Open GitBash from the Start Menu.
-> 2.Export display environment on the bash command: `export DISPLAY=localhost:0`
-> 3. ssh to the target machine with x11 forwarding enabled: `ssh -XY usrname@orchestra.med.harvard.edu`
+> 2. Export display environment on the bash command: `export DISPLAY=localhost:0`
+> 3. ssh to the target machine with x11 forwarding enabled: `ssh -XY username@orchestra.med.harvard.edu`
 
 Once you are in, navigate to the `rnaseq_project` directory:
 
 	$ cd unix_workshop/rnaseq
 
-We will be running an R script that uses the R package [DESeq2](http://bioconductor.org/packages/release/bioc/html/DESeq2.html) to identify differentially expressed genes. This package is available through the [Bioconductor](https://www.bioconductor.org/), a repository of packages for the analysis of high-throughput genomic data. There are also a few other packages that are required to generate some additional figures.
+We will be running an R script that uses the R package [DESeq2](http://bioconductor.org/packages/release/bioc/html/DESeq2.html) to identify differentially expressed genes. This package is available from [Bioconductor](https://www.bioconductor.org/), which is a repository of packages for the analysis of high-throughput genomic data. There are also a few other packages that are required to generate some additional figures.
 
 We first need to load the R module:
 
@@ -81,7 +81,7 @@ You should find yourself back at the shell command prompt. The next few lines wi
 
 To run differential expression analysis, we are going to run a script from the `results` directory, so let's navigate there and create a directory for the results of our analysis. We will call the directory `diffexpression`:
 
-	$ cd results
+	$ cd ~/unix_workshop/rnaseq/results
 	$ mkdir diffexpression
 
 First, let's copy over the script file:
@@ -99,7 +99,7 @@ The DE script will require as input **1) your count matrix file** and **2) a met
 
 Once you have the files copied, take a quick look at the metadata using `less`.
 
-Ok, now we're all setup to run our R script! Let's run it from within our `diffexpression` directory,
+Now we're all setup to run our R script! Let's run it from within our `diffexpression` directory,
 
 	$ cd diffexpression
 	$ Rscript DESeq2_script.R Mov10_rnaseq_counts_complete.txt Mov10_rnaseq_metadata.txt 
