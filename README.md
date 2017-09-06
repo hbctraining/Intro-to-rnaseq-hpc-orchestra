@@ -13,6 +13,12 @@ This repository has teaching materials for a 2-day Introduction to RNA-sequencin
 
 > These materials were developed for a trainer-led workshop, but are also amenable to self-guided learning.
 
+### Learning Objectives
+
+1.	Understand the necessity for, and use of, the command line interface (bash) and HPC for analyzing high-throughput sequencing data.
+2.	Understand best practices for designing an RNA-seq experiment and analysis the resulting data.
+
+
 ### Contents
 | Lessons            | Estimated Duration |
 |:------------------------|:----------|
