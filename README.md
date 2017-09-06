@@ -21,12 +21,12 @@ This repository has teaching materials for a 2-day Introduction to RNA-sequencin
 |[Shell scripts and `for` loop](lessons/03_loops_and_scripts.md) | 75 min |
 |[Permissions and environment variables](lessons/04_permissions_and_environment_variables.md) | 50 min |
 |[Project and data management](lessons/05_data_organization.md) | 40 min |
-|[Intro to RNA-Seq](lectures/) | 50 min |
-|[Introduction to High-Performance Computing](lectures/) | 45 min |
+|[Intro to RNA-Seq](lectures/rna-seq_design.pdf) | 50 min |
+|[Introduction to High-Performance Computing](lectures/HPC_intro_slides_Radhika.pdf) | 45 min |
 |[Data QC - Intro and FastQC)](lessons/06_assessing_quality.md) | 75 min |
 |[RNA-Seq workflow - Alignment and Counting](lessons/07_rnaseq_workflow.md) | 90 min |
 |[Automating RNA-Seq workflow](lessons/08_automating_workflow.md) | 60 min |
-|[RNA-seq analysis methods](lectures/) | 15 min |
+|[RNA-seq analysis methods](lectures/RNAseq-analysis-methods.pdf) | 15 min |
 |[Quantifying expression using alignment-free methods (Salmon)](lessons/09_salmon.md) | 75 min |
 
 ### Dataset
