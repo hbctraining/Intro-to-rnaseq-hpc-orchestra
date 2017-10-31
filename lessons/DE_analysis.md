@@ -128,7 +128,7 @@ Since the list we have is generated from analaysis on a small subset of chromoso
 
 In the script we used above, we used count data generated from the standard RNA-seq workflow as input. The instructions are below to perform a similar analysis with the output from Salmon. To perform this analysis, you will need to use R and Rstudio directly. We do not have a script available that works on Orchestra. 
 
-**The rest of this section assumes that you are comfortable with R and RStudio.**
+#####**The rest of this section assumes that you are comfortable with R and RStudio.**
 
 The output from Salmon is transcript counts, but DESeq2 works well only with gene counts. To bridge this gap, the developers of DESeq2 have developed a package makes the output of Salmon compatible with DESeq2. This package is called [`tximport`](https://bioconductor.org/packages/release/bioc/html/tximport.html) and is also vailable through Bioconductor. `tximport` imports transcript-level abundance, estimated counts and transcript lengths, and summarizes this into matrices for use with downstream gene-level analysis packages. 
 
