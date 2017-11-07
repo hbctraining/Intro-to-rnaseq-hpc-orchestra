@@ -20,6 +20,7 @@ This repository has teaching materials for a 2-day Introduction to RNA-sequencin
 
 
 ### Contents
+
 | Lessons            | Estimated Duration |
 |:------------------------|:----------|
 |[Introduction to the shell](lessons/01_the_filesystem.md) | 70 min |
@@ -35,7 +36,9 @@ This repository has teaching materials for a 2-day Introduction to RNA-sequencin
 |[Alternative workflows for analyzing RNA-seq data](lectures/RNAseq-analysis-methods.pdf) | 15 min |
 |[Quantifying expression using alignment-free methods (Salmon)](lessons/09_salmon.md) | 75 min |
 
+
 ### Dataset
+
 
 ***
 *These materials have been developed by members of the teaching team at the [Harvard Chan Bioinformatics Core (HBC)](http://bioinformatics.sph.harvard.edu/). These are open access materials distributed under the terms of the [Creative Commons Attribution license](https://creativecommons.org/licenses/by/4.0/) (CC BY 4.0), which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited.*
