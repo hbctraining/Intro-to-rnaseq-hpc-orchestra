@@ -155,7 +155,7 @@ Now let's put it all together! The full STAR alignment command is provided below
 
 ```bash
 $ STAR --runThreadN 3 \
---genomeDir /groups/hbctraining/unix_lesson_other/reference_STAR \
+--genomeDir /groups/hbctraining/intro_rnaseq_hpc/reference_STAR \
 --readFilesIn raw_data/Mov10_oe_1.subset.fq \
 --outFileNamePrefix results/STAR/Mov10_oe_1_ \
 --outSAMtype BAM SortedByCoordinate \
@@ -228,7 +228,7 @@ So, it looks like the usage is `featureCounts [options] -a <annotation_file> -o 
 It can also take multiple bam files as input. Since we have only run STAR on 1 FASTQ file, let's copy over the other bam files that we would need so we can generate the full count matrix.
 
 ```bash
-cp /groups/hbctraining/unix_lesson_other/bam_STAR/*bam ~/unix_lesson/rnaseq/results/STAR/
+cp /groups/hbctraining/intro_rnaseq_hpc/bam_STAR/*bam ~/unix_lesson/rnaseq/results/STAR/
 ```
 
 We are going to use the following options:
