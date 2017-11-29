@@ -81,7 +81,7 @@ echo "Sample name is $base"
 
 > **Remember `basename`?**
 >
-> 1. the `basename` command: this command takes a path or a name and trims away all the information before the last `\` and if you specify the string to clear away at the end, it will do that as well. In this case, if the variable `$fq` contains the path *"~/unix_workshop/rnaseq/raw_data/Mov10_oe_1.subset.fq"*, `basename $fq .subset.fq` will output "Mov10_oe_1".
+> 1. the `basename` command: this command takes a path or a name and trims away all the information before the last `\` and if you specify the string to clear away at the end, it will do that as well. In this case, if the variable `$fq` contains the path *"~/unix_lesson/rnaseq/raw_data/Mov10_oe_1.subset.fq"*, `basename $fq .subset.fq` will output "Mov10_oe_1".
 > 2. to assign this value to the `base` variable, we place the `basename...` command in parentheses and put a `$` outside. This syntax is necessary for assigning the output of a command to a variable.
 
 Next we want to specify how many cores the script should use to run the analysis. This provides us with an easy way to modify the script to run with more or fewer cores without have to replace the number within all commands where cores are specified.
@@ -96,8 +96,8 @@ Next we'll initialize 2 more variables named `genome` and `gtf`, these will cont
 ```
 # directory with genome reference FASTA and index files + name of the gene annotation file
 
-genome=/groups/hbctraining/unix_workshop_other/reference_STAR/
-gtf=~/unix_workshop/rnaseq/reference_data/chr1-hg19_genes.gtf
+genome=/groups/hbctraining/unix_lesson_other/reference_STAR/
+gtf=~/unix_lesson/rnaseq/reference_data/chr1-hg19_genes.gtf
 ```
 
 We'll create output directories, but with the `-p` option. This will make sure that `mkdir` will create the directory only if it does not exist, and it won't throw an error if it does exist.
@@ -107,9 +107,9 @@ We'll create output directories, but with the `-p` option. This will make sure t
 # The -p option means mkdir will create the whole path if it 
 # does not exist and refrain from complaining if it does exist
 
-mkdir -p ~/unix_workshop/rnaseq/results/fastqc/
-mkdir -p ~/unix_workshop/rnaseq/results/STAR
-mkdir -p ~/unix_workshop/rnaseq/results/counts
+mkdir -p ~/unix_lesson/rnaseq/results/fastqc/
+mkdir -p ~/unix_lesson/rnaseq/results/STAR
+mkdir -p ~/unix_lesson/rnaseq/results/counts
 ```
 
 Now that we have already created our output directories, we can now specify variables with the path to those directories both for convenience but also to make it easier to see what is going on in a long command.
@@ -117,10 +117,10 @@ Now that we have already created our output directories, we can now specify vari
 ```
 # set up output filenames and locations
 
-fastqc_out=~/unix_workshop/rnaseq/results/fastqc/
-align_out=~/unix_workshop/rnaseq/results/STAR/${base}_
-counts_input_bam=~/unix_workshop/rnaseq/results/STAR/${base}_Aligned.sortedByCoord.out.bam
-counts=~/unix_workshop/rnaseq/results/counts/${base}_featurecounts.txt
+fastqc_out=~/unix_lesson/rnaseq/results/fastqc/
+align_out=~/unix_lesson/rnaseq/results/STAR/${base}_
+counts_input_bam=~/unix_lesson/rnaseq/results/STAR/${base}_Aligned.sortedByCoord.out.bam
+counts=~/unix_lesson/rnaseq/results/counts/${base}_featurecounts.txt
 ```
 
 ### Keeping track of tool versions
@@ -181,17 +181,17 @@ It is okay to specify this everything else is set up, since you will have most c
 To transfer the contents of the script to Orchestra, you can copy and paste the contents into a new file using `nano`. 
 
 ```bash
-$ cd ~/unix_workshop/rnaseq/scripts/
+$ cd ~/unix_lesson/rnaseq/scripts/
 
 $ nano rnaseq_analysis_on_input_file.sh 
 ```
 
-*Alternatively, you can save the script on your computer and transfer it to `~/unix_workshop/rnaseq/scripts/` using FileZilla.*
+*Alternatively, you can save the script on your computer and transfer it to `~/unix_lesson/rnaseq/scripts/` using FileZilla.*
 
 We should all have an interactive session with 2 or more cores, so we can start the script:
 
 ```bash
-$ sh rnaseq_analysis_on_input_file.sh ~/unix_workshop/rnaseq/raw_data/Mov10_oe_1.subset.fq
+$ sh rnaseq_analysis_on_input_file.sh ~/unix_lesson/rnaseq/raw_data/Mov10_oe_1.subset.fq
 ```
 
 **Before we move to the next section, modify the number of cores in the above script to 6 using `nano`, so we can have it run a lot faster when we submit it as an LSF job.**
@@ -219,7 +219,7 @@ Below is what this second script would look like **\[DO NOT RUN THIS\]**:
 #BSUB -e %J.err       		# File to which standard error will be written
 
 # this `for` loop, will take the fastq files as input and run the script for all of them one after the other. 
-for fq in ~/unix_workshop/rnaseq/raw_data/*.fq
+for fq in ~/unix_lesson/rnaseq/raw_data/*.fq
 do
   echo "running analysis on $fq"
   rnaseq_analysis_on_input_file.sh $fq
@@ -252,16 +252,16 @@ This script loops through the same files as in the previous (demo) script, but t
 ```bash
 #! /bin/bash
 
-for fq in ~/unix_workshop/rnaseq/raw_data/*.fq
+for fq in ~/unix_lesson/rnaseq/raw_data/*.fq
 do
   
-  bsub -q training -n 6 -W 1:30 -R "rusage[mem=4000]" -J rnaseq_mov10 -o %J.out -e %J.err "sh ~/unix_workshop/rnaseq/scripts/rnaseq_analysis_on_input_file.sh $fq"
+  bsub -q training -n 6 -W 1:30 -R "rusage[mem=4000]" -J rnaseq_mov10 -o %J.out -e %J.err "sh ~/unix_lesson/rnaseq/scripts/rnaseq_analysis_on_input_file.sh $fq"
   
   sleep 1	# wait 1 second between each job submission
   
 done
 ```
-Please note that after the `bsub` directives the command `sh ~/unix_workshop/rnaseq/scripts/rnaseq_analysis_on_input_file.sh $fq` is in quotes.
+Please note that after the `bsub` directives the command `sh ~/unix_lesson/rnaseq/scripts/rnaseq_analysis_on_input_file.sh $fq` is in quotes.
 
 What you should see on the output of your screen would be the jobIDs that are returned from the scheduler for each of the jobs that your script submitted.
 
